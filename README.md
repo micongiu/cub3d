@@ -1,3 +1,3 @@
 # Cub3d
 
-The start of Cub3d by Micongiu and 
+The start of Cub3d by Micongiu and Anmedyns
