@@ -2,11 +2,10 @@
 
 void draw_square(t_data *data, int x, int y, int color)
 {
-	for (int i = 0; i < TILE_SIZE; i++) {
-		for (int j = 0; j < TILE_SIZE; j++) {
-			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE + j, y * TILE_SIZE + i, color);
-		}
-	}
+	for (int i = 0; i < TILE_SIZE; i++)
+		mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE, y * TILE_SIZE + i, color);
+	for (int j = 0; j < TILE_SIZE; j++)
+			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE + j, y * TILE_SIZE, color);
 }
 
 void render_map(t_data *data) {

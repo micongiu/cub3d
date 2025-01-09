@@ -3,6 +3,7 @@
 
 # include "libft/libft.h"
 # include "gnl/get_next_line.h"
+# include "minilibx-linux/mlx.h"
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
@@ -22,9 +23,9 @@ typedef struct s_var_count
 }	t_var_count;
 
 typedef struct s_data {
-	int		mlx;
-	int		win;
-	int		img;
+	void	*mlx;
+	void	*win;
+	void	*img;
 	char	**map;
 	int		map_width;
 	int		map_height;
