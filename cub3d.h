@@ -6,6 +6,11 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
+#include <string.h>
+
+#define WIDTH 800
+#define HEIGHT 600
+#define TILE_SIZE 32
 
 // Structures
 
@@ -16,7 +21,21 @@ typedef struct s_var_count
 	int			k;
 }	t_var_count;
 
+typedef struct s_data {
+	int		mlx;
+	int		win;
+	int		img;
+	char	**map;
+	int		map_width;
+	int		map_height;
+} t_data;
+
 // Enums
+
+
+//Init
+
+t_data *ft_init_data(char **map);
 
 
 // main.c

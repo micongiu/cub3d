@@ -26,6 +26,7 @@ void	ft_error(char *str)
 int main(int argc, char **argv)
 {
 	char	**map;
+	t_data	*data;
 
 	if (argc != 2)
 		return (-1);
@@ -34,5 +35,9 @@ int main(int argc, char **argv)
 	map = open_file(argv[1]);
 	for (int i = 0; map[i]; i++)
 		printf("%s", map[i]);
+	data = ft_init_data(map);
+	printf("width = %i\n", data->map_width);
+	printf("width = %i\n", data->map_height);
+
 	free_matrix((void **)map);
 }
