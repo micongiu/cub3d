@@ -21,4 +21,9 @@ typedef struct s_var_count
 
 // main.c
 
+void	free_matrix(void **matrix);
+void	ft_error(char *str);
+char	**open_file(char *file_read);
+int		main();
+
 #endif
