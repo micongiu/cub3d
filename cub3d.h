@@ -11,7 +11,7 @@
 
 #define WIDTH 800
 #define HEIGHT 600
-#define TILE_SIZE 32
+#define TILE_SIZE 64
 
 // Structures
 
@@ -22,14 +22,20 @@ typedef struct s_var_count
 	int			k;
 }	t_var_count;
 
-typedef struct s_data {
-	void	*mlx;
-	void	*win;
-	void	*img;
-	char	**map;
-	int		map_width;
-	int		map_height;
-} t_data;
+typedef struct s_data
+{
+	void		*mlx;
+	void		*win;
+	void		*img;
+	char		**map;
+	int			map_width;
+	int			map_height;
+	int			x_player;
+	int			y_player;
+	float player_x;
+	float player_y;
+	float player_angle;
+}	t_data;
 
 // Enums
 
