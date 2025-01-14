@@ -8,12 +8,14 @@ void draw_square(t_data *data, int x, int y, int color)
 			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE + j, y * TILE_SIZE + i, color);
 	}
 }
+
 void render_map(t_data *data)
 {
 	for (int y = 0; data->map[y] != NULL; y++)
 	{
-		int row_length = strlen(data->map[y]);
-		for (int x = 0; x < row_length; x++) {
+		int row_length = ft_strlen_lib(data->map[y]);
+		for (int x = 0; x < row_length; x++)
+		{
 			if (data->map[y][x] == '1')
 				draw_square(data, x, y, 0xFF0000);
 			else if (data->map[y][x] == '0')
@@ -76,6 +78,7 @@ void find_player(t_data *data)
 		i++;
 	}
 	printf("no player\n");
+	free_matrix((void **)data->map);
 	free(data);
 	exit(0);
 }
@@ -87,7 +90,7 @@ void calculate_map_dimensions(t_data *data) {
 
 	row_length = 0;
 	for	(int y = 0; data->map[y] != NULL; y++) {
-		row_length = strlen(data->map[y]);
+		row_length = ft_strlen_lib(data->map[y]);
 		if (row_length > data->map_width)
 			data->map_width = row_length;
 		data->map_height++;
@@ -98,15 +101,21 @@ void calculate_map_dimensions(t_data *data) {
 	printf("y_p = %i\n", data->y_player);
 }
 
+int	ft_close(t_data *data)
+{
+	printf("ESC pressed. Exiting...\n");
+	// mlx_destroy_image(data->mlx, data->img);
+	mlx_destroy_window(data->mlx, data->win);
+	free(data->mlx);
+	free_matrix((void **)data->map);
+	free(data);
+	exit(0);
+}
+
 int handle_keypress(int keycode, t_data *data)
 {
 	if (keycode == 65307)
-	{
-		printf("ESC pressed. Exiting...\n");
-		mlx_destroy_window(data->mlx, data->win);
-		free(data);
-		exit(0);
-	}
+		ft_close(data);
 	if(keycode == 119)
 		move_p(data,'w');
 	else if(keycode == 115)
@@ -118,16 +127,20 @@ int handle_keypress(int keycode, t_data *data)
 	return (0);
 }
 
-t_data *ft_init_data(char **map)
+void	ft_init_data(t_data *data, char *argv)
 {
-	t_data *data = malloc(sizeof(t_data));
-	data->map = map;
-	printf("\nmap[0][0] = %c\n", map[0][0]);
+	data = ft_calloc(sizeof(t_data), 1);
+	data->map = open_file(argv);
+	for (int i = 0; data->map[i]; i++)
+		printf("%s", data->map[i]);
+	printf("\nmap[0][0] = %c\n", data->map[0][0]);
 	calculate_map_dimensions(data);
+	printf("width = %i\n", data->map_width);
+	printf("width = %i\n", data->map_height);
 	data->mlx = mlx_init();
 	data->win = mlx_new_window(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE, "Cub3D Map");
 	render_map(data);
+	mlx_hook(data->win, 17, 0, (int (*)())ft_close, data);
 	mlx_hook(data->win, 2, 1L << 0, (int (*)())handle_keypress, data);
 	mlx_loop(data->mlx);
-	return (data);
 }

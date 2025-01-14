@@ -42,7 +42,7 @@ typedef struct s_data
 
 //Init
 
-t_data *ft_init_data(char **map);
+void	ft_init_data(t_data *data, char *argv);
 
 
 // main.c

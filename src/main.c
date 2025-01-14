@@ -25,19 +25,11 @@ void	ft_error(char *str)
 
 int main(int argc, char **argv)
 {
-	char	**map;
-	t_data	*data;
+	t_data	data;
 
 	if (argc != 2)
-		return (-1);
+		ft_error("Use./cub3d test_map/*.ber");
 	if (ft_strnstr(argv[1], ".ber", ft_strlen_lib(argv[1])) == NULL)
 		ft_error("Use only .ber file");
-	map = open_file(argv[1]);
-	for (int i = 0; map[i]; i++)
-		printf("%s", map[i]);
-	data = ft_init_data(map);
-	printf("width = %i\n", data->map_width);
-	printf("width = %i\n", data->map_height);
-
-	free_matrix((void **)map);
+	ft_init_data(&data, argv[1]);
 }
