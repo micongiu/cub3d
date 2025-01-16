@@ -1,5 +1,30 @@
 #include "../cub3d.h"
 
+void draw_line(t_data *data, int start_x, int start_y,int dx, int dy, int color)
+{
+	while(dx < 64)
+	{
+		int pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
+		int pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
+		int map_x;
+		int map_y;
+
+		while (pixel_y >= 0 && pixel_y < data->map_height * TILE_SIZE)
+		{
+			map_x = pixel_x / TILE_SIZE;
+			map_y = pixel_y / TILE_SIZE;
+
+			if (data->map[map_y][map_x] == '1')
+				break;
+			mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
+			pixel_y += dy;
+			pixel_x += dx;
+		}
+		dx++;
+	}
+}
+
+
 void draw_square(t_data *data, int x, int y, int color)
 {
 	for (int i = 0; i < TILE_SIZE; i++)
@@ -45,10 +70,13 @@ void move_p(t_data *data, char direc)
 		{
 			data->map[data->y_player][data->x_player] = '0';
 			draw_square(data, data->x_player, data->y_player, 0x00FF00);
+				draw_line(data, data->x_player, data->y_player,-1, -1, 0x00FF00);
 			data->x_player = new_x;
 			data->y_player = new_y;
 			data->map[data->y_player][data->x_player] = 'P';
 			draw_square(data, data->x_player, data->y_player, 0x0000FF);
+			draw_line(data, data->x_player, data->y_player,-1, -1, 0x800080);
+
 		}
 		else
 			printf("Wall!!!\n");
