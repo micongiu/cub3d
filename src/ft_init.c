@@ -1,11 +1,83 @@
 #include "../cub3d.h"
 
-void draw_line(t_data *data, int start_x, int start_y,int dx, int dy, int color)
+void draw_line_sotto(t_data *data, int start_x, int start_y, float dx, float dy, int color)
 {
-	while(dx < 64)
+	while(dx < 1)
 	{
-		int pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
-		int pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
+		float pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
+		float pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
+		int map_x;
+		int map_y;
+
+		while (pixel_y >= 0 && pixel_y < data->map_height * TILE_SIZE)
+		{
+			map_x = pixel_x / TILE_SIZE;
+			map_y = pixel_y / TILE_SIZE;
+
+			if (data->map[map_y][map_x] == '1')
+				break;
+			mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
+			pixel_y -= dy;
+			pixel_x -= dx;
+		}
+		dx += 0.001;
+	}
+}
+
+void draw_line_destra(t_data *data, int start_x, int start_y, float dx, float dy, int color)
+{
+	while(dx < 1)
+	{
+		float pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
+		float pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
+		int map_x;
+		int map_y;
+
+		while (pixel_y >= 0 && pixel_y < data->map_height * TILE_SIZE)
+		{
+			map_x = pixel_x / TILE_SIZE;
+			map_y = pixel_y / TILE_SIZE;
+
+			if (data->map[map_y][map_x] == '1')
+				break;
+			mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
+			pixel_y -= dx;
+			pixel_x -= dy;
+		}
+		dx += 0.001;
+	}
+}
+
+void draw_line_sinistra(t_data *data, int start_x, int start_y, float dx, float dy, int color)
+{
+	while(dx < 1)
+	{
+		float pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
+		float pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
+		int map_x;
+		int map_y;
+
+		while (pixel_y >= 0 && pixel_y < data->map_height * TILE_SIZE)
+		{
+			map_x = pixel_x / TILE_SIZE;
+			map_y = pixel_y / TILE_SIZE;
+
+			if (data->map[map_y][map_x] == '1')
+				break;
+			mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
+			pixel_y += dx;
+			pixel_x += dy;
+		}
+		dx += 0.001;
+	}
+}
+
+void draw_line_sopra(t_data *data, int start_x, int start_y, float dx, float dy, int color)
+{
+	while(dx < 1)
+	{
+		float pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
+		float pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
 		int map_x;
 		int map_y;
 
@@ -20,10 +92,9 @@ void draw_line(t_data *data, int start_x, int start_y,int dx, int dy, int color)
 			pixel_y += dy;
 			pixel_x += dx;
 		}
-		dx++;
+		dx += 0.001;
 	}
 }
-
 
 void draw_square(t_data *data, int x, int y, int color)
 {
