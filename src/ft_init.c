@@ -19,6 +19,7 @@ void draw_line_sotto(t_data *data, int start_x, int start_y, float dx, float dy,
 			mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
 			pixel_y -= dy;
 			pixel_x -= dx;
+
 		}
 		dx += 0.001;
 	}
@@ -121,6 +122,17 @@ void render_map(t_data *data)
 		}
 	}
 }
+void what_line(t_data *data,int x, int y, char dir, int color)
+{
+	if(dir == 'w')
+		draw_line_sopra(data, x, y, -0.9, -0.9, color);
+	if(dir == 's')
+		draw_line_sotto(data, x, y, -0.9, -0.9, color);
+	if(dir == 'a')
+		draw_line_sinistra(data, x, y, -0.9, -0.9, color);
+	if(dir == 'd')
+		draw_line_destra(data, x, y, -0.9, -0.9, color);
+}
 
 void move_p(t_data *data, char direc)
 {
@@ -141,13 +153,18 @@ void move_p(t_data *data, char direc)
 		{
 			data->map[data->y_player][data->x_player] = '0';
 			draw_square(data, data->x_player, data->y_player, 0x00FF00);
-				draw_line(data, data->x_player, data->y_player,-1, -1, 0x00FF00);
+			if(data->prev_x == 0 && data->prev_y == 0 && data->last_direct == '\0')
+				what_line(data, data->player_x, data->player_y, direc, 0x00FF00);
+			else if (data->prev_x != 0 && data->prev_y != 0)
+				what_line(data, data->prev_x, data->prev_y, data->last_direct, 0x00FF00);
+			data->last_direct = direc;
+			data->prev_x = data->x_player;
+			data->prev_y = data->y_player;
 			data->x_player = new_x;
 			data->y_player = new_y;
 			data->map[data->y_player][data->x_player] = 'P';
 			draw_square(data, data->x_player, data->y_player, 0x0000FF);
-			draw_line(data, data->x_player, data->y_player,-1, -1, 0x800080);
-
+			what_line(data, data->x_player, data->y_player, direc, 0x800080);
 		}
 		else
 			printf("Wall!!!\n");
@@ -230,6 +247,9 @@ void	ft_init_data(t_data *data, char *argv)
 {
 	data = ft_calloc(sizeof(t_data), 1);
 	data->map = open_file(argv);
+	data->prev_x = 0;
+	data->prev_y = 0;
+	data->last_direct = '\0';
 	for (int i = 0; data->map[i]; i++)
 		printf("%s", data->map[i]);
 	printf("\nmap[0][0] = %c\n", data->map[0][0]);

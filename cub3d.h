@@ -33,6 +33,9 @@ typedef struct s_data
 	int			map_height;
 	int			x_player;
 	int			y_player;
+	int			prev_x;
+	int			prev_y;
+	char		last_direct;
 	float player_x;
 	float player_y;
 	float player_angle;
