@@ -33,19 +33,25 @@ typedef struct s_data
 	int			map_height;
 	int			x_player;
 	int			y_player;
-	int			prev_x;
-	int			prev_y;
-	char		last_direct;
-	float player_x;
-	float player_y;
-	float player_angle;
+	float		float_x;
+	float		float_y;
+	float		player_angle;
+	float		dx;
+	float		dy;
 }	t_data;
 
+
+// utils
+void find_player(t_data *data);
+void calculate_map_dimensions(t_data *data);
+int ft_close(t_data *data);
+int handle_keypress(int keycode, t_data *data);
+void draw_square(t_data *data, int x, int y, int color);
 // Enums
 
 
 //Init
-
+void move_p(t_data *data, char direc);
 void	ft_init_data(t_data *data, char *argv);
 
 

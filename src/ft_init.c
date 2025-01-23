@@ -1,108 +1,44 @@
 #include "../cub3d.h"
 
-void draw_line_sotto(t_data *data, int start_x, int start_y, float dx, float dy, int color)
+void rotate_view(float *dx, float *dy, float angle)
 {
-	while(dx < 1)
-	{
-		float pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
-		float pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
-		int map_x;
-		int map_y;
+	float new_dx = (*dx) * cos(angle) - (*dy) * sin(angle);
+	float new_dy = (*dx) * sin(angle) + (*dy) * cos(angle);
 
-		while (pixel_y >= 0 && pixel_y < data->map_height * TILE_SIZE)
-		{
-			map_x = pixel_x / TILE_SIZE;
-			map_y = pixel_y / TILE_SIZE;
-
-			if (data->map[map_y][map_x] == '1')
-				break;
-			mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
-			pixel_y -= dy;
-			pixel_x -= dx;
-
-		}
-		dx += 0.001;
-	}
+	*dx = new_dx;
+	*dy = new_dy;
 }
-
-void draw_line_destra(t_data *data, int start_x, int start_y, float dx, float dy, int color)
-{
-	while(dx < 1)
-	{
-		float pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
-		float pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
-		int map_x;
-		int map_y;
-
-		while (pixel_y >= 0 && pixel_y < data->map_height * TILE_SIZE)
-		{
-			map_x = pixel_x / TILE_SIZE;
-			map_y = pixel_y / TILE_SIZE;
-
-			if (data->map[map_y][map_x] == '1')
-				break;
-			mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
-			pixel_y -= dx;
-			pixel_x -= dy;
-		}
-		dx += 0.001;
-	}
-}
-
-void draw_line_sinistra(t_data *data, int start_x, int start_y, float dx, float dy, int color)
-{
-	while(dx < 1)
-	{
-		float pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
-		float pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
-		int map_x;
-		int map_y;
-
-		while (pixel_y >= 0 && pixel_y < data->map_height * TILE_SIZE)
-		{
-			map_x = pixel_x / TILE_SIZE;
-			map_y = pixel_y / TILE_SIZE;
-
-			if (data->map[map_y][map_x] == '1')
-				break;
-			mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
-			pixel_y += dx;
-			pixel_x += dy;
-		}
-		dx += 0.001;
-	}
-}
-
 void draw_line_sopra(t_data *data, int start_x, int start_y, float dx, float dy, int color)
 {
-	while(dx < 1)
+	float pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
+	float pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
+	int map_x, map_y;
+
+	while (pixel_y >= 0 && pixel_y < data->map_height * TILE_SIZE &&
+		pixel_x >= 0 && pixel_x < data->map_width * TILE_SIZE)
 	{
-		float pixel_x = start_x * TILE_SIZE + TILE_SIZE / 2;
-		float pixel_y = start_y * TILE_SIZE + TILE_SIZE / 2;
-		int map_x;
-		int map_y;
+		map_x = pixel_x / TILE_SIZE;
+		map_y = pixel_y / TILE_SIZE;
 
-		while (pixel_y >= 0 && pixel_y < data->map_height * TILE_SIZE)
-		{
-			map_x = pixel_x / TILE_SIZE;
-			map_y = pixel_y / TILE_SIZE;
+		if (data->map[map_y][map_x] == '1')
+			break;
 
-			if (data->map[map_y][map_x] == '1')
-				break;
-			mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
-			pixel_y += dy;
-			pixel_x += dx;
-		}
-		dx += 0.001;
+		mlx_pixel_put(data->mlx, data->win, pixel_x, pixel_y, color);
+		pixel_x += dx;
+		pixel_y += dy;
 	}
 }
-
-void draw_square(t_data *data, int x, int y, int color)
+void draw_cono(t_data *data, int start_x, int start_y, float dx, float dy, int color)
 {
-	for (int i = 0; i < TILE_SIZE; i++)
+	float fov = 1.162;
+	int ray_n = 100;
+	float angle_steps = fov / ray_n; // Angolo tra ciascun raggio
+	for (int i = 0; i < ray_n; i++)
 	{
-		for (int j = 0; j < TILE_SIZE; j++)
-			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE + j, y * TILE_SIZE + i, color);
+		float angle = -fov / 2 + i * angle_steps;
+		float ray_dx = dx * cos(angle) - dy * sin(angle);
+		float ray_dy = dx * sin(angle) + dy * cos(angle);
+		draw_line_sopra(data, start_x, start_y, ray_dx, ray_dy, color);
 	}
 }
 
@@ -122,134 +58,63 @@ void render_map(t_data *data)
 		}
 	}
 }
-void what_line(t_data *data,int x, int y, char dir, int color)
-{
-	if(dir == 'w')
-		draw_line_sopra(data, x, y, -0.9, -0.9, color);
-	if(dir == 's')
-		draw_line_sotto(data, x, y, -0.9, -0.9, color);
-	if(dir == 'a')
-		draw_line_sinistra(data, x, y, -0.9, -0.9, color);
-	if(dir == 'd')
-		draw_line_destra(data, x, y, -0.9, -0.9, color);
-}
-
 void move_p(t_data *data, char direc)
 {
-	int new_x = data->x_player;
-	int new_y = data->y_player;
+	float new_x = data->float_x;
+	float new_y = data->float_y;
 
-	if(direc == 'w')
-		new_y--;
-	if(direc == 's')
-		new_y++;
-	if(direc == 'a')
-		new_x--;
-	if(direc == 'd')
-		new_x++;
-	if(new_x > 0 && new_y > 0 && new_y < data->map_height && new_x < (data->map_width - 1))
-	{
-		if(data->map[new_y][new_x] != '1')
-		{
+		// Spostamento basato sull'orientamento
+	if (direc == 'w') { // Avanti
+		new_x += data->dx * 0.1;
+		new_y += data->dy * 0.1;
+	}
+	if (direc == 's') { // Indietro
+		new_x -= data->dx * 0.1;
+		new_y -= data->dy * 0.1;
+	}
+	if (direc == 'a') { // Sinistra (laterale)
+		new_x -= data->dy * 0.1; // Perpendicolare a (dx, dy)
+		new_y += data->dx * 0.1;
+	}
+	if (direc == 'd') { // Destra (laterale)
+		new_x += data->dy * 0.1; // Perpendicolare a (dx, dy)
+		new_y -= data->dx * 0.1;
+	}
+	printf("new_x = %f\n", new_x);
+	printf("new_y = %f\n", new_y);
+
+	if (direc == 'l') // Sinistra
+		rotate_view(&data->dx, &data->dy, -0.1);
+	if (direc == 'r') // Destra
+		rotate_view(&data->dx, &data->dy, 0.1);
+
+	if (new_x > 0 && new_y > 0 && new_y < data->map_height && new_x < (data->map_width - 1)) {
+		if (data->map[(int)new_y][(int)new_x] != '1') {
+			data->float_x = new_x;
+			data->float_y = new_y;
+			mlx_clear_window(data->mlx, data->win);
 			data->map[data->y_player][data->x_player] = '0';
-			draw_square(data, data->x_player, data->y_player, 0x00FF00);
-			if(data->prev_x == 0 && data->prev_y == 0 && data->last_direct == '\0')
-				what_line(data, data->player_x, data->player_y, direc, 0x00FF00);
-			else if (data->prev_x != 0 && data->prev_y != 0)
-				what_line(data, data->prev_x, data->prev_y, data->last_direct, 0x00FF00);
-			data->last_direct = direc;
-			data->prev_x = data->x_player;
-			data->prev_y = data->y_player;
-			data->x_player = new_x;
-			data->y_player = new_y;
+			data->x_player = (int)data->float_x;
+			data->y_player = (int)data->float_y;
+			printf("x_p = %i\n", data->x_player);
+			printf("y_p = %i\n", data->y_player);
 			data->map[data->y_player][data->x_player] = 'P';
-			draw_square(data, data->x_player, data->y_player, 0x0000FF);
-			what_line(data, data->x_player, data->y_player, direc, 0x800080);
-		}
-		else
+			render_map(data);
+			draw_cono(data, data->x_player, data->y_player, data->dx, data->dy, 0x800080);
+		} else {
 			printf("Wall!!!\n");
-	}
-	else
-		printf("Wall!!!\n");
-}
-
-
-void find_player(t_data *data)
-{
-	int i = 0;
-	int j = 0;
-	while(data->map[i] != NULL)
-	{
-		j = 0;
-		while(data->map[i][j] != '\0')
-		{
-			if(data->map[i][j] == 'P')
-			{
-				data->x_player = j;
-				data->y_player = i;
-				return;
-			}
-			j++;
 		}
-		i++;
+	} else {
+		printf("Wall!!!\n");
 	}
-	printf("no player\n");
-	free_matrix((void **)data->map);
-	free(data);
-	exit(0);
 }
 
-void calculate_map_dimensions(t_data *data) {
-	int row_length;
-	data->map_width = 0;
-	data->map_height = 0;
-
-	row_length = 0;
-	for	(int y = 0; data->map[y] != NULL; y++) {
-		row_length = ft_strlen_lib(data->map[y]);
-		if (row_length > data->map_width)
-			data->map_width = row_length;
-		data->map_height++;
-	}
-	data->map_width--;
-	find_player(data);
-	printf("x_p = %i\n", data->x_player);
-	printf("y_p = %i\n", data->y_player);
-}
-
-int	ft_close(t_data *data)
+void ft_init_data(t_data *data, char *argv)
 {
-	printf("ESC pressed. Exiting...\n");
-	// mlx_destroy_image(data->mlx, data->img);
-	mlx_destroy_window(data->mlx, data->win);
-	free(data->mlx);
-	free_matrix((void **)data->map);
-	free(data);
-	exit(0);
-}
-
-int handle_keypress(int keycode, t_data *data)
-{
-	if (keycode == 65307)
-		ft_close(data);
-	if(keycode == 119)
-		move_p(data,'w');
-	else if(keycode == 115)
-		move_p(data,'s');
-	else if(keycode == 97)
-		move_p(data,'a');
-	else if(keycode == 100)
-		move_p(data,'d');
-	return (0);
-}
-
-void	ft_init_data(t_data *data, char *argv)
-{
-	data = ft_calloc(sizeof(t_data), 1);
 	data->map = open_file(argv);
-	data->prev_x = 0;
-	data->prev_y = 0;
-	data->last_direct = '\0';
+	data->dx = 0; // Direzione iniziale: "sopra"
+	data->dy = -1;
+
 	for (int i = 0; data->map[i]; i++)
 		printf("%s", data->map[i]);
 	printf("\nmap[0][0] = %c\n", data->map[0][0]);
