@@ -73,12 +73,12 @@ void move_p(t_data *data, char direc)
 		new_y -= data->dy * 0.1;
 	}
 	if (direc == 'a') { // Sinistra (laterale)
-		new_x -= data->dy * 0.1; // Perpendicolare a (dx, dy)
-		new_y += data->dx * 0.1;
+		new_x += data->dy * 0.1;
+		new_y -= data->dx * 0.1;
 	}
 	if (direc == 'd') { // Destra (laterale)
-		new_x += data->dy * 0.1; // Perpendicolare a (dx, dy)
-		new_y -= data->dx * 0.1;
+		new_x -= data->dy * 0.1;
+		new_y += data->dx * 0.1;
 	}
 	printf("new_x = %f\n", new_x);
 	printf("new_y = %f\n", new_y);
