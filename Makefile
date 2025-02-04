@@ -1,6 +1,6 @@
 NAME = cub3d
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -I./include -O2
+CFLAGS = -Wall -Wextra -Werror -g -I./include
 
 GREEN = \033[0;32m
 BLUE = \033[0;34m
@@ -17,7 +17,7 @@ MAKEFLAGS += -s
 GNL = ./gnl/get_next_line_utils.c ./gnl/get_next_line.c
 MAIN = ./src/main.c ./src/read_map.c ./src/ft_init.c ./src/utils.c
 
-SRC = $(MAIN) $(GNL)
+SRC = $(GNL) $(MAIN)
 
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 

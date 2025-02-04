@@ -29,9 +29,9 @@ int main(int argc, char **argv)
 
 	if (argc != 2)
 		ft_error("Use./cub3d test_map/*.ber");
-	printf("%d %d %d\n", (int)0.4, (int)0.9, (int)1.9);
 	if (ft_strnstr(argv[1], ".ber", ft_strlen_lib(argv[1])) == NULL)
 		ft_error("Use only .ber file");
 	data = ft_calloc(sizeof(t_data), 1);
 	ft_init_data(data, argv[1]);
+	return (0);
 }

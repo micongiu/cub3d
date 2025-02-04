@@ -51,6 +51,7 @@ int ft_close(t_data *data)
 {
 	printf("ESC pressed. Exiting...\n");
 	mlx_destroy_window(data->mlx, data->win);
+	mlx_destroy_display(data->mlx);
 	free(data->mlx);
 	free_matrix((void **)data->map);
 	free(data);

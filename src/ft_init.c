@@ -28,6 +28,7 @@ void draw_line_sopra(t_data *data, int start_x, int start_y, float dx, float dy,
 		pixel_y += dy;
 	}
 }
+
 void draw_cono(t_data *data, int start_x, int start_y, float dx, float dy, int color)
 {
 	float fov = 1.162;
