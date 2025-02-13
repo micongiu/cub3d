@@ -4,8 +4,7 @@ char	**read_file(char **str_read, int fd, char *file_read)
 {
 	int		k;
 	int		i;
-	// int		allo;
-
+	
 	k = 0;
 	i = 0;
 	while (str_read[0] != NULL)

@@ -38,6 +38,18 @@ typedef struct s_data
 	float		player_angle;
 	float		dx;
 	float		dy;
+
+	// Texture
+	void	*tex_north;
+	void	*tex_south;
+	void	*tex_east;
+	void	*tex_west;
+	int		*tex_north_data;
+	int		*tex_south_data;
+	int		*tex_east_data;
+	int		*tex_west_data;
+	int		tex_width;
+	int		tex_height;
 }	t_data;
 
 
