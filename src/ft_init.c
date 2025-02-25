@@ -17,6 +17,27 @@ void rotate_view(float *dx, float *dy, float angle)
 
 void render_3d(t_data *data)
 {
+	int i = 0;
+	int y = 0;
+	while (i <= data->map_width * TILE_SIZE) {
+		y = 0;
+		while (y <= data->map_height * TILE_SIZE / 2)
+		{
+			mlx_pixel_put(data->mlx, data->win, i, y, 0xA020F0);
+			y++;
+		}
+		i++;
+	}
+	i = 0;
+	while (i <= data->map_width * TILE_SIZE) {
+		y = data->map_height * TILE_SIZE / 2;
+		while (y <= data->map_height * TILE_SIZE)
+		{
+			mlx_pixel_put(data->mlx, data->win, i, y, 0x83f52c);
+			y++;
+		}
+		i++;
+	}
 	int screen_width = data->map_width * TILE_SIZE;
 	int screen_height = data->map_height * TILE_SIZE;
 	float fov = 1.484; // Circa 66.5 gradi
