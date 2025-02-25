@@ -159,8 +159,21 @@ void ft_init_data(t_data *data, char *argv)
 	// xmp_init(data);
 	data->mlx = mlx_init();
 	data->win = mlx_new_window(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE, "Cub3D Map");
-	render_3d(data);
+	int		bits_per_pixel;
+	int		line_length;
+	int endian;
+	char	*path = "./test.xpm/my_img.xmp";
+	data->img = mlx_xpm_file_to_image(data->mlx, path, &line_length, &bits_per_pixel);
+	if (!data->img) {
+        perror("Error loading XPM image");
+        return ;
+    }
+	mlx_get_data_addr(data->img, &bits_per_pixel, &line_length, &endian);
+    mlx_put_image_to_window(data->mlx, data->win, data->img, 0, 0);
 	mlx_hook(data->win, 17, 0, (int (*)())ft_close, data);
 	mlx_hook(data->win, 2, 1L << 0, (int (*)())handle_keypress, data);
 	mlx_loop(data->mlx);
+
+    // Display the image in the window.
+	render_3d(data);
 }

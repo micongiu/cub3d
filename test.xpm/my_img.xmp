@@ -1,0 +1,46 @@
+/* XPM */
+static char * wood_wall_medieval_xpm[] = {
+"64 64 6 1",
+"       c #654321",   /* Dark Brown */
+".      c #8B5A2B",   /* Medium Brown */
+"x      c #A06530",   /* Light Brown */
+"o      c #B57A3F",   /* Lighter Brown */
+"O      c #CD9A55",   /* Very Light Brown */
+"+      c #E0C28A",   /* Lightest Brown */
+"oxO.oxO.oxO.oxO.oxO.oxO.oxO.oxO.oxO.oxO.oxO.oxO.oxO.oxO.oxO.oxO",
+"Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo.Oxo",
+"x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.",
+"................................................................",
+"ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo",
+"OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo",
+"x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.",
+"................................................................",
+"ooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOO",
+"OOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOoooo",
+"x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.",
+"................................................................",
+"ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo",
+"OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo",
+"x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.",
+"................................................................",
+"ooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOO",
+"OOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOoooo",
+"x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.",
+"................................................................",
+"ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo",
+"OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo",
+"x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.",
+"................................................................",
+"ooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOO",
+"OOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOoooo",
+"x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.",
+"................................................................",
+"ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo.ooOo",
+"OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo.OOoo",
+"x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.",
+"................................................................",
+"ooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOO",
+"OOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOooooOOOOoooo",
+"x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.x.",
+"................................................................"
+};
