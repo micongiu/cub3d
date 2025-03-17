@@ -1,6 +1,6 @@
 NAME = cub3d
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -I./include
+CFLAGS = -Wall -Wextra -Werror -g -I./include -o3
 
 GREEN = \033[0;32m
 BLUE = \033[0;34m

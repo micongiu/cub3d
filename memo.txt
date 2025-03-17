@@ -1,0 +1,6 @@
+https://lodev.org/cgtutor/raycasting.html#Textured_Raycaster
+
+
+
+
+togliere il punto interrogativo per la norma 
