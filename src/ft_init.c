@@ -1,9 +1,6 @@
 #include "../cub3d.h"
 
-// void xmp_init(t_data *data)
-// {
-// 	data
-// }
+
 
 
 void rotate_view(float *dx, float *dy, float angle)
@@ -216,7 +213,7 @@ void ft_init_data(t_data *data, char *argv)
 	int		door_endian;
 	int		door_line_length;
 	int		door_bits_per_pixel;
-	char	*path = "./test.xpm/my_img.xmp";
+	char	*path = "./test.xpm/my_img.xpm";
 	data->img = mlx_xpm_file_to_image(data->mlx, path, &door_w, &door_h);
 	if (!data->img) {
 		perror("Error loading XPM image");
@@ -237,21 +234,21 @@ void ft_init_data(t_data *data, char *argv)
 			k++;
 		}
 	}
-	for (size_t d = 20; d < 600; d++)
-	{
-		mlx_pixel_put(data->mlx, data->win, d, 50, door_buff[0]);
-		mlx_pixel_put(data->mlx, data->win, d, 51, door_buff[1]);
-		mlx_pixel_put(data->mlx, data->win, d, 52, door_buff[2]);
-		mlx_pixel_put(data->mlx, data->win, d, 53, door_buff[3]);
-		mlx_pixel_put(data->mlx, data->win, d, 54, door_buff[4]);
-		mlx_pixel_put(data->mlx, data->win, d, 55, door_buff[5]);
-		mlx_pixel_put(data->mlx, data->win, d, 56, door_buff[6]);
-		mlx_pixel_put(data->mlx, data->win, d, 75, door_buff[137]);
-		mlx_pixel_put(data->mlx, data->win, d, 76, door_buff[137]);
-		mlx_pixel_put(data->mlx, data->win, d, 77, door_buff[137]);
-	}
+	// for (size_t d = 20; d < 600; d++)
+	// {
+	// 	mlx_pixel_put(data->mlx, data->win, d, 50, door_buff[0]);
+	// 	mlx_pixel_put(data->mlx, data->win, d, 51, door_buff[1]);
+	// 	mlx_pixel_put(data->mlx, data->win, d, 52, door_buff[2]);
+	// 	mlx_pixel_put(data->mlx, data->win, d, 53, door_buff[3]);
+	// 	mlx_pixel_put(data->mlx, data->win, d, 54, door_buff[4]);
+	// 	mlx_pixel_put(data->mlx, data->win, d, 55, door_buff[5]);
+	// 	mlx_pixel_put(data->mlx, data->win, d, 56, door_buff[6]);
+	// 	mlx_pixel_put(data->mlx, data->win, d, 75, door_buff[137]);
+	// 	mlx_pixel_put(data->mlx, data->win, d, 76, door_buff[137]);
+	// 	mlx_pixel_put(data->mlx, data->win, d, 77, door_buff[137]);
+	// }
 
-	mlx_put_image_to_window(data->mlx, data->win, data->img, 0, 0);
+	// mlx_put_image_to_window(data->mlx, data->win, data->img, 0, 0);
 	mlx_hook(data->win, 17, 0, (int (*)())ft_close, data);
 	mlx_hook(data->win, 2, 1L << 0, (int (*)())handle_keypress, data);
 	mlx_loop(data->mlx);
