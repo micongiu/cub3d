@@ -160,10 +160,24 @@ void render_3d(t_data *data)
 		}
 		wall_x -= floor(wall_x); // Mantieni solo la parte frazionaria (0-1)
 
+		// Calcola la texture da utilizzare
+		t_texture *current_texture;
+		if (hit_side == 0) { // Muro verticale (Est/Ovest)
+			if (step_x > 0)
+				current_texture = &data->texture_east; // Est
+			else
+				current_texture = &data->texture_west; // Ovest
+		} else { // Muro orizzontale (Nord/Sud)
+			if (step_y > 0)
+				current_texture = &data->texture_south; // Sud
+			else
+				current_texture = &data->texture_north; // Nord
+		}
+
 		// Calcola la coordinata x della texture
-		int tex_x = (int)(wall_x * data->texture.width);
+		int tex_x = (int)(wall_x * current_texture->width);
 		if ((hit_side == 0 && ray_dx > 0) || (hit_side == 1 && ray_dy < 0)) {
-			tex_x = data->texture.width - tex_x - 1;
+			tex_x = current_texture->width - tex_x - 1;
 		}
 
 		// Calcola dove iniziare e finire di disegnare la linea verticale
@@ -173,40 +187,20 @@ void render_3d(t_data *data)
 		int draw_end = (screen_height + line_height) / 2;
 		if (draw_end >= screen_height) draw_end = screen_height - 1;
 
-		// Disegna la linea verticale con texture per i muri a nord, colori solidi per gli altri
+		// Disegna la linea verticale con la texture selezionata
 		for (int y = draw_start; y <= draw_end; y++) {
-			int color;
+			int tex_y = (int)((y - draw_start) * current_texture->height / line_height);
+			int color = current_texture->data[tex_y * current_texture->width + tex_x];
 
-			// Usa la texture solo per i muri a nord (hit_side == 1 && ray_dy < 0)
-			if (hit_side == 1 && ray_dy < 0) {
-				// Calcola la coordinata y della texture
-				int tex_y = (int)((y - draw_start) * data->texture.height / line_height);
+			// Applica ombreggiatura per l'effetto di profondità
+			float shade = 1.0 / (1.0 + distance * 0.1);
+			if (shade > 1.0) shade = 1.0;
 
-				// Ottieni il colore dalla texture
-				color = data->texture.data[tex_y * data->texture.width + tex_x];
+			int r = (int)(((color >> 16) & 0xFF) * shade);
+			int g = (int)(((color >> 8) & 0xFF) * shade);
+			int b = (int)((color & 0xFF) * shade);
 
-				// Applica una leggera ombreggiatura per l'effetto di profondità
-				float shade = 1.0 / (1.0 + distance * 0.1);
-				if (shade > 1.0) shade = 1.0;
-
-				int r = (int)(((color >> 16) & 0xFF) * shade);
-				int g = (int)(((color >> 8) & 0xFF) * shade);
-				int b = (int)((color & 0xFF) * shade);
-
-				color = (r << 16) | (g << 8) | b;
-			} else {
-				// Per gli altri muri, usa i colori originali
-				if (hit_side == 1) { // Nord o Sud (muri orizzontali)
-					color = (step_y > 0) ? 0xFF0000 : 0x00FF00; // Sud (rosso) / Nord (verde)
-				} else { // Est o Ovest (muri verticali)
-					color = (step_x > 0) ? 0x0000FF : 0xFFFF00; // Est (blu) / Ovest (giallo)
-				}
-
-				// Riduce luminosità per i muri colpiti lateralmente
-				if (hit_side == 1) {
-					color = (color >> 1) & 0x7F7F7F;
-				}
-			}
+			color = (r << 16) | (g << 8) | b;
 
 			// Disegna il pixel
 			my_mlx_pixel_put(data, x, y, color);
@@ -280,16 +274,23 @@ void ft_init_data(t_data *data, char *argv)
 	data->img_buffer = mlx_new_image(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE);
 	data->img_addr = mlx_get_data_addr(data->img_buffer, &data->bits_per_pixel, &data->line_length, &data->endian);
 
-	// Carica la texture
-	char *path = "./test.xpm/b_w_n.xpm";
-	data->texture.img = mlx_xpm_file_to_image(data->mlx, path, &data->texture.width, &data->texture.height);
-	if (!data->texture.img) {
-		perror("Error loading XPM image");
+	// Carica le texture per ogni direzione
+	data->texture_north.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/b_w_n.xpm", &data->texture_north.width, &data->texture_north.height);
+	data->texture_south.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/b_w_s.xpm", &data->texture_south.width, &data->texture_south.height);
+	data->texture_east.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/b_w_o.xpm", &data->texture_east.width, &data->texture_east.height);
+	data->texture_west.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/b_w_w.xpm", &data->texture_west.width, &data->texture_west.height);
+
+	// Controlla se le texture sono state caricate correttamente
+	if (!data->texture_north.img || !data->texture_south.img || !data->texture_east.img || !data->texture_west.img) {
+		perror("Error loading XPM images");
 		return;
 	}
 
-	// Converti i dati della texture
-	convert_texture_data(data, &data->texture);
+	// Converti i dati delle texture
+	convert_texture_data(data, &data->texture_north);
+	convert_texture_data(data, &data->texture_south);
+	convert_texture_data(data, &data->texture_east);
+	convert_texture_data(data, &data->texture_west);
 
 	// Configura gli hook per gli eventi
 	mlx_hook(data->win, 17, 0, (int (*)())ft_close, data);

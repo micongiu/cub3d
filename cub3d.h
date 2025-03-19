@@ -49,23 +49,17 @@ typedef struct s_data
 	float		player_angle;
 	float		dx;
 	float		dy;
-	t_texture	texture;
 	int			bits_per_pixel;
 	int			line_length;
 	int			endian;
 	char		*img_addr;
 	void		*img_buffer;
-	// Texture
-	void	*tex_north;
-	void	*tex_south;
-	void	*tex_east;
-	void	*tex_west;
-	int		*tex_north_data;
-	int		*tex_south_data;
-	int		*tex_east_data;
-	int		*tex_west_data;
-	int		tex_width;
-	int		tex_height;
+
+    // Texture per i muri
+    t_texture	texture_north; // Texture per il muro Nord
+    t_texture	texture_south; // Texture per il muro Sud
+    t_texture	texture_east;  // Texture per il muro Est
+    t_texture	texture_west;  // Texture per il muro Ovest
 }	t_data;
 
 
