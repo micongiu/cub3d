@@ -16,6 +16,17 @@
 
 // Structures
 
+
+typedef struct s_texture {
+	void *img;
+	int *data;
+	int width;
+	int height;
+	int bits_per_pixel;
+	int line_length;
+	int endian;
+} t_texture;
+
 typedef struct s_var_count
 {
 	int			i;
@@ -38,7 +49,12 @@ typedef struct s_data
 	float		player_angle;
 	float		dx;
 	float		dy;
-
+	t_texture	texture;
+	int			bits_per_pixel;
+	int			line_length;
+	int			endian;
+	char		*img_addr;
+	void		*img_buffer;
 	// Texture
 	void	*tex_north;
 	void	*tex_south;

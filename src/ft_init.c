@@ -1,7 +1,11 @@
 #include "../cub3d.h"
 
-
-
+// Funzione per mettere un pixel nel buffer dell'immagine
+void my_mlx_pixel_put(t_data *data, int x, int y, int color)
+{
+	char *dst = data->img_addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+	*(unsigned int*)dst = color;
+}
 
 void rotate_view(float *dx, float *dy, float angle)
 {
@@ -12,22 +16,49 @@ void rotate_view(float *dx, float *dy, float angle)
 	*dy = new_dy;
 }
 
+// Funzione per convertire i dati della texture in un array di interi
+void convert_texture_data(t_data *data, t_texture *texture)
+{
+	(void)data;
+	texture->data = (int *)malloc(sizeof(int) * texture->width * texture->height);
+	if (!texture->data)
+		return;
+
+	void *addr = mlx_get_data_addr(texture->img, &texture->bits_per_pixel,
+								&texture->line_length, &texture->endian);
+
+	for (int y = 0; y < texture->height; y++)
+	{
+		for (int x = 0; x < texture->width; x++)
+		{
+			int pixel = y * texture->line_length + x * 4;
+			char *ptr = addr + pixel;
+			texture->data[y * texture->width + x] = ((unsigned char)ptr[2] << 16) +
+												((unsigned char)ptr[1] << 8) +
+												((unsigned char)ptr[0]);
+		}
+	}
+}
+
 void render_3d(t_data *data)
 {
 	int screen_width = data->map_width * TILE_SIZE;
 	int screen_height = data->map_height * TILE_SIZE;
 
+	// Pulisci il buffer dell'immagine
+	ft_memset(data->img_addr, 0, screen_width * screen_height * (data->bits_per_pixel / 8));
+
 	// Renderizza il cielo (metà superiore dello schermo)
 	for (int i = 0; i < screen_width; i++) {
 		for (int y = 0; y < screen_height / 2; y++) {
-			mlx_pixel_put(data->mlx, data->win, i, y, 0xA020F0); // Viola per il cielo
+			my_mlx_pixel_put(data, i, y, 0xA020F0); // Viola per il cielo
 		}
 	}
 
 	// Renderizza il pavimento (metà inferiore dello schermo)
 	for (int i = 0; i < screen_width; i++) {
 		for (int y = screen_height / 2; y < screen_height; y++) {
-			mlx_pixel_put(data->mlx, data->win, i, y, 0x83f52c); // Verde per il pavimento
+			my_mlx_pixel_put(data, i, y, 0x83f52c); // Verde per il pavimento
 		}
 	}
 
@@ -41,7 +72,8 @@ void render_3d(t_data *data)
 	float ray_angle = player_angle - (fov / 2);
 
 	// Esegui il raycasting per ogni colonna dello schermo
-	for (int x = 0; x < ray_n; x++) {
+	for (int x = 0; x < ray_n; x++)
+	{
 		// Calcola la direzione del raggio
 		float ray_dx = cos(ray_angle);
 		float ray_dy = sin(ray_angle);
@@ -84,7 +116,7 @@ void render_3d(t_data *data)
 		}
 
 		// Esegui DDA
-		float max_distance = 20.0; // Distanza massima di ricerca
+		float max_distance = 30.0; // Distanza massima di ricerca
 		while (!hit_wall && distance < max_distance) {
 			// Salta al prossimo quadrato della mappa
 			if (side_dist_x < side_dist_y) {
@@ -119,12 +151,19 @@ void render_3d(t_data *data)
 			line_height = 0;
 		}
 
-		// Determina il colore del muro in base alla direzione
-		int color;
-		if (hit_side == 1) { // Nord o Sud (muri orizzontali)
-			color = (step_y > 0) ? 0xFF0000 : 0x00FF00; // Sud (rosso) / Nord (verde)
-		} else { // Est o Ovest (muri verticali)
-			color = (step_x > 0) ? 0x0000FF : 0xFFFF00; // Est (blu) / Ovest (giallo)
+		// Calcola la coordinata esatta del punto di impatto sul muro
+		float wall_x;
+		if (hit_side == 0) {
+			wall_x = ray_y + distance * ray_dy;
+		} else {
+			wall_x = ray_x + distance * ray_dx;
+		}
+		wall_x -= floor(wall_x); // Mantieni solo la parte frazionaria (0-1)
+
+		// Calcola la coordinata x della texture
+		int tex_x = (int)(wall_x * data->texture.width);
+		if ((hit_side == 0 && ray_dx > 0) || (hit_side == 1 && ray_dy < 0)) {
+			tex_x = data->texture.width - tex_x - 1;
 		}
 
 		// Calcola dove iniziare e finire di disegnare la linea verticale
@@ -134,16 +173,52 @@ void render_3d(t_data *data)
 		int draw_end = (screen_height + line_height) / 2;
 		if (draw_end >= screen_height) draw_end = screen_height - 1;
 
-		// Disegna la linea verticale
+		// Disegna la linea verticale con texture per i muri a nord, colori solidi per gli altri
 		for (int y = draw_start; y <= draw_end; y++) {
-			mlx_pixel_put(data->mlx, data->win, x, y, color);
+			int color;
+
+			// Usa la texture solo per i muri a nord (hit_side == 1 && ray_dy < 0)
+			if (hit_side == 1 && ray_dy < 0) {
+				// Calcola la coordinata y della texture
+				int tex_y = (int)((y - draw_start) * data->texture.height / line_height);
+
+				// Ottieni il colore dalla texture
+				color = data->texture.data[tex_y * data->texture.width + tex_x];
+
+				// Applica una leggera ombreggiatura per l'effetto di profondità
+				float shade = 1.0 / (1.0 + distance * 0.1);
+				if (shade > 1.0) shade = 1.0;
+
+				int r = (int)(((color >> 16) & 0xFF) * shade);
+				int g = (int)(((color >> 8) & 0xFF) * shade);
+				int b = (int)((color & 0xFF) * shade);
+
+				color = (r << 16) | (g << 8) | b;
+			} else {
+				// Per gli altri muri, usa i colori originali
+				if (hit_side == 1) { // Nord o Sud (muri orizzontali)
+					color = (step_y > 0) ? 0xFF0000 : 0x00FF00; // Sud (rosso) / Nord (verde)
+				} else { // Est o Ovest (muri verticali)
+					color = (step_x > 0) ? 0x0000FF : 0xFFFF00; // Est (blu) / Ovest (giallo)
+				}
+
+				// Riduce luminosità per i muri colpiti lateralmente
+				if (hit_side == 1) {
+					color = (color >> 1) & 0x7F7F7F;
+				}
+			}
+
+			// Disegna il pixel
+			my_mlx_pixel_put(data, x, y, color);
 		}
 
 		// Incrementa l'angolo per il prossimo raggio
 		ray_angle += angle_step;
 	}
-}
 
+	// Alla fine del rendering, visualizza il buffer
+	mlx_put_image_to_window(data->mlx, data->win, data->img_buffer, 0, 0);
+}
 
 void move_p(t_data *data, char direc)
 {
@@ -188,71 +263,40 @@ void move_p(t_data *data, char direc)
 	}
 }
 
-unsigned int	get_color_5(int door_line_length, void* door_adr, int x, int y)
-{
-	char	*ptr;
-	int		pixel;
-
-	pixel = y * door_line_length + x * 4;
-	ptr = door_adr + pixel;
-	return ((((unsigned char)ptr[2]) << 16)
-		+ (((unsigned char)ptr[1]) << 8) + ((unsigned char)ptr[0]));
-}
-
 void ft_init_data(t_data *data, char *argv)
 {
+	// t_texture	texture;
 	data->map = open_file(argv);
 	data->dx = 0;
 	data->dy = -1;
 
 	calculate_map_dimensions(data);
 	data->mlx = mlx_init();
-	data->win = mlx_new_window(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE, "Cub3D Map");
-	int		door_w;
-	int		door_h;
-	int		door_endian;
-	int		door_line_length;
-	int		door_bits_per_pixel;
-	char	*path = "./test.xpm/my_img.xpm";
-	data->img = mlx_xpm_file_to_image(data->mlx, path, &door_w, &door_h);
-	if (!data->img) {
-		perror("Error loading XPM image");
-		return ;
-	}
-	void* door_adr = mlx_get_data_addr(data->img, &door_bits_per_pixel, &door_line_length, &door_endian);
-	int *door_buff = ft_calloc(4, (door_h * door_w));
-	int i = -1;
-	int j = 0;
-	int	k = 0;
-	while (++i < door_h)
-	{
-		j = 0;
-		while (j < door_w)
-		{
-			door_buff[k] = get_color_5(door_line_length, door_adr, j, i);
-			j++;
-			k++;
-		}
-	}
-	// for (size_t d = 20; d < 600; d++)
-	// {
-	// 	mlx_pixel_put(data->mlx, data->win, d, 50, door_buff[0]);
-	// 	mlx_pixel_put(data->mlx, data->win, d, 51, door_buff[1]);
-	// 	mlx_pixel_put(data->mlx, data->win, d, 52, door_buff[2]);
-	// 	mlx_pixel_put(data->mlx, data->win, d, 53, door_buff[3]);
-	// 	mlx_pixel_put(data->mlx, data->win, d, 54, door_buff[4]);
-	// 	mlx_pixel_put(data->mlx, data->win, d, 55, door_buff[5]);
-	// 	mlx_pixel_put(data->mlx, data->win, d, 56, door_buff[6]);
-	// 	mlx_pixel_put(data->mlx, data->win, d, 75, door_buff[137]);
-	// 	mlx_pixel_put(data->mlx, data->win, d, 76, door_buff[137]);
-	// 	mlx_pixel_put(data->mlx, data->win, d, 77, door_buff[137]);
-	// }
 
-	// mlx_put_image_to_window(data->mlx, data->win, data->img, 0, 0);
+	// Crea la finestra
+	data->win = mlx_new_window(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE, "Cub3D Map");
+
+	// Crea il buffer dell'immagine
+	data->img_buffer = mlx_new_image(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE);
+	data->img_addr = mlx_get_data_addr(data->img_buffer, &data->bits_per_pixel, &data->line_length, &data->endian);
+
+	// Carica la texture
+	char *path = "./test.xpm/b_w_n.xpm";
+	data->texture.img = mlx_xpm_file_to_image(data->mlx, path, &data->texture.width, &data->texture.height);
+	if (!data->texture.img) {
+		perror("Error loading XPM image");
+		return;
+	}
+
+	// Converti i dati della texture
+	convert_texture_data(data, &data->texture);
+
+	// Configura gli hook per gli eventi
 	mlx_hook(data->win, 17, 0, (int (*)())ft_close, data);
 	mlx_hook(data->win, 2, 1L << 0, (int (*)())handle_keypress, data);
-	mlx_loop(data->mlx);
 
-	// Display the image in the window.
+	// Renderizza la scena iniziale
 	render_3d(data);
+	// Avvia il loop degli eventi
+	mlx_loop(data->mlx);
 }
