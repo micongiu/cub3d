@@ -257,14 +257,57 @@ void move_p(t_data *data, char direc)
 	}
 }
 
+int parser_map(t_data *data)
+{
+	int i = 0;
+	int j = 0;
+
+	int p = 0;
+
+	while(data->map[i])
+	{
+		j = 0;
+		while (data->map[i][j])
+		{
+			if (data->map[i][j] == '1' || data->map[i][j] == '0' || data->map[i][j] == 'P')
+			{
+				if (data->map[i][j] == 'P')
+				{
+					p++;
+				}
+				j++;
+				continue;
+			}
+			{
+				return 1;
+			}
+			j++;
+		}
+		i++;
+	}
+	if(p != 1)
+	{
+		printf("Error in the parser\n");
+		return 1;
+	}
+	return 0;
+}
+
+
 void ft_init_data(t_data *data, char *argv)
 {
 	// t_texture	texture;
 	data->map = open_file(argv);
 	data->dx = 0;
 	data->dy = -1;
-
 	calculate_map_dimensions(data);
+/////
+	if(parser_map(data))
+	{
+		printf("Error in the parser\n");
+		exit(0);
+	}
+/////
 	data->mlx = mlx_init();
 
 	// Crea la finestra
