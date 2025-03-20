@@ -51,8 +51,17 @@ void calculate_map_dimensions(t_data *data)
 int ft_close(t_data *data)
 {
 	printf("ESC pressed. Exiting...\n");
+	mlx_destroy_image(data->mlx, data->img_buffer);
+	mlx_destroy_image(data->mlx, data->texture_north.img);
+	mlx_destroy_image(data->mlx, data->texture_south.img);
+	mlx_destroy_image(data->mlx, data->texture_east.img);
+	mlx_destroy_image(data->mlx, data->texture_west.img);
 	mlx_destroy_window(data->mlx, data->win);
 	mlx_destroy_display(data->mlx);
+	free(data->texture_north.data);
+	free(data->texture_south.data);
+	free(data->texture_east.data);
+	free(data->texture_west.data);
 	free(data->mlx);
 	free_matrix((void **)data->map);
 	free(data);

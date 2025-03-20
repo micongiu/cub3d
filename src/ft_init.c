@@ -20,13 +20,11 @@ void rotate_view(float *dx, float *dy, float angle)
 void convert_texture_data(t_data *data, t_texture *texture)
 {
 	(void)data;
-	texture->data = (int *)malloc(sizeof(int) * texture->width * texture->height);
+	texture->data = (int *)ft_calloc(sizeof(int), texture->width * texture->height);
 	if (!texture->data)
-		return;
-
+		ft_error("no texture");
 	void *addr = mlx_get_data_addr(texture->img, &texture->bits_per_pixel,
 								&texture->line_length, &texture->endian);
-
 	for (int y = 0; y < texture->height; y++)
 	{
 		for (int x = 0; x < texture->width; x++)
@@ -42,99 +40,98 @@ void convert_texture_data(t_data *data, t_texture *texture)
 
 void render_3d(t_data *data)
 {
-	int screen_width = data->map_width * TILE_SIZE;
-	int screen_height = data->map_height * TILE_SIZE;
+	t_render_data render_vars;
+
+	render_vars.screen_width = data->map_width * TILE_SIZE;
+	render_vars.screen_height = data->map_height * TILE_SIZE;
 
 	// Pulisci il buffer dell'immagine
-	ft_memset(data->img_addr, 0, screen_width * screen_height * (data->bits_per_pixel / 8));
+	ft_memset(data->img_addr, 0, render_vars.screen_width * render_vars.screen_height * (data->bits_per_pixel / 8));
 
 	// Renderizza il cielo (metà superiore dello schermo)
-	for (int i = 0; i < screen_width; i++) {
-		for (int y = 0; y < screen_height / 2; y++) {
+	for (int i = 0; i < render_vars.screen_width; i++) {
+		for (int y = 0; y < render_vars.screen_height / 2; y++) {
 			my_mlx_pixel_put(data, i, y, 0xA020F0); // Viola per il cielo
 		}
 	}
 
 	// Renderizza il pavimento (metà inferiore dello schermo)
-	for (int i = 0; i < screen_width; i++) {
-		for (int y = screen_height / 2; y < screen_height; y++) {
+	for (int i = 0; i < render_vars.screen_width; i++) {
+		for (int y = render_vars.screen_height / 2; y < render_vars.screen_height; y++) {
 			my_mlx_pixel_put(data, i, y, 0x83f52c); // Verde per il pavimento
 		}
 	}
 
 	// Configurazione del campo visivo e del raycasting
-	float fov = 1.0472; // 60 gradi in radianti
-	int ray_n = screen_width; // Un raggio per ogni colonna dello schermo
-	float angle_step = fov / ray_n;
+	render_vars.fov = 1.0472; // 60 gradi in radianti
+	render_vars.ray_n = render_vars.screen_width; // Un raggio per ogni colonna dello schermo
+	render_vars.angle_step = render_vars.fov / render_vars.ray_n;
 
 	// Calcola l'angolo del giocatore dai vettori di direzione
-	float player_angle = atan2(data->dy, data->dx);
-	float ray_angle = player_angle - (fov / 2);
+	render_vars.player_angle = atan2(data->dy, data->dx);
+	render_vars.ray_angle = render_vars.player_angle - (render_vars.fov / 2);
 
 	// Esegui il raycasting per ogni colonna dello schermo
-	for (int x = 0; x < ray_n; x++)
+	for (int x = 0; x < render_vars.ray_n; x++)
 	{
 		// Calcola la direzione del raggio
-		float ray_dx = cos(ray_angle);
-		float ray_dy = sin(ray_angle);
+		render_vars.ray_dx = cos(render_vars.ray_angle);
+		render_vars.ray_dy = sin(render_vars.ray_angle);
 
 		// Posizione iniziale del raggio (posizione del giocatore)
-		float ray_x = data->float_x;
-		float ray_y = data->float_y;
+		render_vars.ray_x = data->float_x;
+		render_vars.ray_y = data->float_y;
 
 		// Distanza percorsa dal raggio
-		float distance = 0.0;
-		int hit_wall = 0;
-		int hit_side = 0;
+		render_vars.distance = 0.0;
+		render_vars.hit_wall = 0;
+		render_vars.hit_side = 0;
 
 		// DDA (Digital Differential Analysis) per il raycasting
-		float delta_dist_x = fabs(1.0 / ray_dx);
-		float delta_dist_y = fabs(1.0 / ray_dy);
+		render_vars.delta_dist_x = fabs(1.0 / render_vars.ray_dx);
+		render_vars.delta_dist_y = fabs(1.0 / render_vars.ray_dy);
 
 		// Calcola la distanza fino al prossimo bordo della griglia
-		int map_x = (int)ray_x;
-		int map_y = (int)ray_y;
+		render_vars.map_x = (int)render_vars.ray_x;
+		render_vars.map_y = (int)render_vars.ray_y;
 
-		float side_dist_x, side_dist_y;
-		int step_x, step_y;
-
-		// Determina il passo e la distanza laterale iniziale
-		if (ray_dx < 0) {
-			step_x = -1;
-			side_dist_x = (ray_x - map_x) * delta_dist_x;
+		// Calcola la distanza laterale iniziale
+		if (render_vars.ray_dx < 0) {
+			render_vars.step_x = -1;
+			render_vars.side_dist_x = (render_vars.ray_x - render_vars.map_x) * render_vars.delta_dist_x;
 		} else {
-			step_x = 1;
-			side_dist_x = (map_x + 1.0 - ray_x) * delta_dist_x;
+			render_vars.step_x = 1;
+			render_vars.side_dist_x = (render_vars.map_x + 1.0 - render_vars.ray_x) * render_vars.delta_dist_x;
 		}
 
-		if (ray_dy < 0) {
-			step_y = -1;
-			side_dist_y = (ray_y - map_y) * delta_dist_y;
+		if (render_vars.ray_dy < 0) {
+			render_vars.step_y = -1;
+			render_vars.side_dist_y = (render_vars.ray_y - render_vars.map_y) * render_vars.delta_dist_y;
 		} else {
-			step_y = 1;
-			side_dist_y = (map_y + 1.0 - ray_y) * delta_dist_y;
+			render_vars.step_y = 1;
+			render_vars.side_dist_y = (render_vars.map_y + 1.0 - render_vars.ray_y) * render_vars.delta_dist_y;
 		}
 
 		// Esegui DDA
-		float max_distance = 30.0; // Distanza massima di ricerca
-		while (!hit_wall && distance < max_distance) {
+		render_vars.max_distance = 30.0; // Distanza massima di ricerca
+		while (!render_vars.hit_wall && render_vars.distance < render_vars.max_distance) {
 			// Salta al prossimo quadrato della mappa
-			if (side_dist_x < side_dist_y) {
-				side_dist_x += delta_dist_x;
-				map_x += step_x;
-				hit_side = 0; // Colpito un lato verticale (est/ovest)
-				distance = side_dist_x - delta_dist_x;
+			if (render_vars.side_dist_x < render_vars.side_dist_y) {
+				render_vars.side_dist_x += render_vars.delta_dist_x;
+				render_vars.map_x += render_vars.step_x;
+				render_vars.hit_side = 0; // Colpito un lato verticale (est/ovest)
+				render_vars.distance = render_vars.side_dist_x - render_vars.delta_dist_x;
 			} else {
-				side_dist_y += delta_dist_y;
-				map_y += step_y;
-				hit_side = 1; // Colpito un lato orizzontale (nord/sud)
-				distance = side_dist_y - delta_dist_y;
+				render_vars.side_dist_y += render_vars.delta_dist_y;
+				render_vars.map_y += render_vars.step_y;
+				render_vars.hit_side = 1; // Colpito un lato orizzontale (nord/sud)
+				render_vars.distance = render_vars.side_dist_y - render_vars.delta_dist_y;
 			}
 
 			// Verifica se abbiamo colpito un muro
-			if (map_y >= 0 && map_x >= 0 && map_y < data->map_height && map_x < data->map_width) {
-				if (data->map[map_y][map_x] == '1') {
-					hit_wall = 1;
+			if (render_vars.map_y >= 0 && render_vars.map_x >= 0 && render_vars.map_y < data->map_height && render_vars.map_x < data->map_width) {
+				if (data->map[render_vars.map_y][render_vars.map_x] == '1') {
+					render_vars.hit_wall = 1;
 				}
 			} else {
 				break; // Siamo usciti dalla mappa
@@ -143,71 +140,72 @@ void render_3d(t_data *data)
 
 		// Calcola l'altezza della linea da disegnare sullo schermo
 		int line_height;
-		if (hit_wall) {
+		if (render_vars.hit_wall) {
 			// Correggi l'effetto fisheye moltiplicando per cos(angolo_raggio - angolo_giocatore)
-			float corrected_distance = distance * cos(ray_angle - player_angle);
-			line_height = (int)(screen_height / corrected_distance);
+			render_vars.corrected_distance = render_vars.distance * cos(render_vars.ray_angle - render_vars.player_angle);
+			line_height = (int)(render_vars.screen_height / render_vars.corrected_distance);
 		} else {
 			line_height = 0;
 		}
 
 		// Calcola la coordinata esatta del punto di impatto sul muro
 		float wall_x;
-		if (hit_side == 0) {
-			wall_x = ray_y + distance * ray_dy;
+		if (render_vars.hit_side == 0) {
+			wall_x = render_vars.ray_y + render_vars.distance * render_vars.ray_dy;
 		} else {
-			wall_x = ray_x + distance * ray_dx;
+			wall_x = render_vars.ray_x + render_vars.distance * render_vars.ray_dx;
 		}
 		wall_x -= floor(wall_x); // Mantieni solo la parte frazionaria (0-1)
 
 		// Calcola la texture da utilizzare
 		t_texture *current_texture;
-		if (hit_side == 0) { // Muro verticale (Est/Ovest)
-			if (step_x > 0)
+		if (render_vars.hit_side == 0) { // Muro verticale (Est/Ovest)
+			if (render_vars.step_x > 0)
 				current_texture = &data->texture_east; // Est
 			else
 				current_texture = &data->texture_west; // Ovest
 		} else { // Muro orizzontale (Nord/Sud)
-			if (step_y > 0)
+			if (render_vars.step_y > 0)
 				current_texture = &data->texture_south; // Sud
 			else
 				current_texture = &data->texture_north; // Nord
 		}
+		render_vars.current_texture = current_texture;
 
 		// Calcola la coordinata x della texture
-		int tex_x = (int)(wall_x * current_texture->width);
-		if ((hit_side == 0 && ray_dx > 0) || (hit_side == 1 && ray_dy < 0)) {
-			tex_x = current_texture->width - tex_x - 1;
+		render_vars.tex_x = (int)(wall_x * render_vars.current_texture->width);
+		if ((render_vars.hit_side == 0 && render_vars.ray_dx > 0) || (render_vars.hit_side == 1 && render_vars.ray_dy < 0)) {
+			render_vars.tex_x = render_vars.current_texture->width - render_vars.tex_x - 1;
 		}
 
 		// Calcola dove iniziare e finire di disegnare la linea verticale
-		int draw_start = (screen_height - line_height) / 2;
-		if (draw_start < 0) draw_start = 0;
+		render_vars.draw_start = (render_vars.screen_height - line_height) / 2;
+		if (render_vars.draw_start < 0) render_vars.draw_start = 0;
 
-		int draw_end = (screen_height + line_height) / 2;
-		if (draw_end >= screen_height) draw_end = screen_height - 1;
+		render_vars.draw_end = (render_vars.screen_height + line_height) / 2;
+		if (render_vars.draw_end >= render_vars.screen_height) render_vars.draw_end = render_vars.screen_height - 1;
 
 		// Disegna la linea verticale con la texture selezionata
-		for (int y = draw_start; y <= draw_end; y++) {
-			int tex_y = (int)((y - draw_start) * current_texture->height / line_height);
-			int color = current_texture->data[tex_y * current_texture->width + tex_x];
+		for (int y = render_vars.draw_start; y <= render_vars.draw_end; y++) {
+			render_vars.tex_y = (int)((y - render_vars.draw_start) * render_vars.current_texture->height / line_height);
+			render_vars.color = render_vars.current_texture->data[render_vars.tex_y * render_vars.current_texture->width + render_vars.tex_x];
 
 			// Applica ombreggiatura per l'effetto di profondità
-			float shade = 1.0 / (1.0 + distance * 0.1);
-			if (shade > 1.0) shade = 1.0;
+			render_vars.shade = 1.0 / (1.0 + render_vars.distance * 0.1);
+			if (render_vars.shade > 1.0) render_vars.shade = 1.0;
 
-			int r = (int)(((color >> 16) & 0xFF) * shade);
-			int g = (int)(((color >> 8) & 0xFF) * shade);
-			int b = (int)((color & 0xFF) * shade);
+			render_vars.r = (int)(((render_vars.color >> 16) & 0xFF) * render_vars.shade);
+			render_vars.g = (int)(((render_vars.color >> 8) & 0xFF) * render_vars.shade);
+			render_vars.b = (int)((render_vars.color & 0xFF) * render_vars.shade);
 
-			color = (r << 16) | (g << 8) | b;
+			render_vars.color = (render_vars.r << 16) | (render_vars.g << 8) | render_vars.b;
 
 			// Disegna il pixel
-			my_mlx_pixel_put(data, x, y, color);
+			my_mlx_pixel_put(data, x, y, render_vars.color);
 		}
 
 		// Incrementa l'angolo per il prossimo raggio
-		ray_angle += angle_step;
+		render_vars.ray_angle += render_vars.angle_step;
 	}
 
 	// Alla fine del rendering, visualizza il buffer
@@ -262,7 +260,6 @@ int parser_map(t_data *data)
 	int i = 0;
 	int j = 0;
 
-	// Controlla che la prima e l'ultima riga siano composte solo da '1'
 	while (j < data->map_width - 1)
 	{
 		if (data->map[0][j] != '1')
@@ -276,7 +273,6 @@ int parser_map(t_data *data)
 		return 1;
 		j++;
 	}
-	// Controlla che la prima e l'ultima colonna di ogni riga siano '1'
 	while (i < data->map_height - 1)
 	{
 		if (data->map[i][0] != '1' || data->map[i][data->map_width - 1] != '1')
@@ -285,7 +281,6 @@ int parser_map(t_data *data)
 		j = 0;
 		while (j < data->map_width - 1)
 		{
-			// Controlla che i caratteri siano validi
 			if (data->map[i][j] != '1' && data->map[i][j] != '0' && data->map[i][j] != 'P')
 			return 1;
 			j++;
@@ -295,53 +290,30 @@ int parser_map(t_data *data)
 	return 0;
 }
 
-
-
 void ft_init_data(t_data *data, char *argv)
 {
-	// t_texture	texture;
 	data->map = open_file(argv);
 	data->dx = 0;
 	data->dy = -1;
 	calculate_map_dimensions(data);
 	if(parser_map(data) == 1)
-	{
-		printf("Error in the parser\n");
-		exit(1);
-	}
+		ft_error("Error in the parser\n");
 	data->mlx = mlx_init();
-	
-	// Crea la finestra
 	data->win = mlx_new_window(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE, "Cub3D Map");
-
-	// Crea il buffer dell'immagine
 	data->img_buffer = mlx_new_image(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE);
 	data->img_addr = mlx_get_data_addr(data->img_buffer, &data->bits_per_pixel, &data->line_length, &data->endian);
-
-	// Carica le texture per ogni direzione
 	data->texture_north.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/b_w_n.xpm", &data->texture_north.width, &data->texture_north.height);
 	data->texture_south.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/b_w_s.xpm", &data->texture_south.width, &data->texture_south.height);
 	data->texture_east.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/b_w_o.xpm", &data->texture_east.width, &data->texture_east.height);
 	data->texture_west.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/b_w_w.xpm", &data->texture_west.width, &data->texture_west.height);
-
-	// Controlla se le texture sono state caricate correttamente
-	if (!data->texture_north.img || !data->texture_south.img || !data->texture_east.img || !data->texture_west.img) {
-		perror("Error loading XPM images");
-		return;
-	}
-
-	// Converti i dati delle texture
+	if (!data->texture_north.img || !data->texture_south.img || !data->texture_east.img || !data->texture_west.img)
+		ft_error("Error loading XPM images");
 	convert_texture_data(data, &data->texture_north);
 	convert_texture_data(data, &data->texture_south);
 	convert_texture_data(data, &data->texture_east);
 	convert_texture_data(data, &data->texture_west);
-
-	// Configura gli hook per gli eventi
 	mlx_hook(data->win, 17, 0, (int (*)())ft_close, data);
 	mlx_hook(data->win, 2, 1L << 0, (int (*)())handle_keypress, data);
-
-	// Renderizza la scena iniziale
 	render_3d(data);
-	// Avvia il loop degli eventi
 	mlx_loop(data->mlx);
 }
