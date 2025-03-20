@@ -42,6 +42,7 @@ void calculate_map_dimensions(t_data *data)
 		data->map_height++;
 	}
 	data->map_width--;
+	// data->map_height--;
 	find_player(data);
 	printf("x_p = %i\n", data->x_player);
 	printf("y_p = %i\n", data->y_player);

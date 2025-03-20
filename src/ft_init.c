@@ -262,36 +262,39 @@ int parser_map(t_data *data)
 	int i = 0;
 	int j = 0;
 
-	int p = 0;
-
-	while(data->map[i])
+	// Controlla che la prima e l'ultima riga siano composte solo da '1'
+	while (j < data->map_width - 1)
 	{
+		if (data->map[0][j] != '1')
+			return 1;
+		j++;
+	}
+	j = 0;
+	while (j < data->map_width - 1)
+	{
+		if (data->map[data->map_height -1][j] != '1')
+		return 1;
+		j++;
+	}
+	// Controlla che la prima e l'ultima colonna di ogni riga siano '1'
+	while (i < data->map_height - 1)
+	{
+		if (data->map[i][0] != '1' || data->map[i][data->map_width - 1] != '1')
+		return 1;
+
 		j = 0;
-		while (data->map[i][j])
+		while (j < data->map_width - 1)
 		{
-			if (data->map[i][j] == '1' || data->map[i][j] == '0' || data->map[i][j] == 'P')
-			{
-				if (data->map[i][j] == 'P')
-				{
-					p++;
-				}
-				j++;
-				continue;
-			}
-			{
-				return 1;
-			}
+			// Controlla che i caratteri siano validi
+			if (data->map[i][j] != '1' && data->map[i][j] != '0' && data->map[i][j] != 'P')
+			return 1;
 			j++;
 		}
 		i++;
 	}
-	if(p != 1)
-	{
-		printf("Error in the parser\n");
-		return 1;
-	}
 	return 0;
 }
+
 
 
 void ft_init_data(t_data *data, char *argv)
@@ -301,15 +304,13 @@ void ft_init_data(t_data *data, char *argv)
 	data->dx = 0;
 	data->dy = -1;
 	calculate_map_dimensions(data);
-/////
-	if(parser_map(data))
+	if(parser_map(data) == 1)
 	{
 		printf("Error in the parser\n");
-		exit(0);
+		exit(1);
 	}
-/////
 	data->mlx = mlx_init();
-
+	
 	// Crea la finestra
 	data->win = mlx_new_window(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE, "Cub3D Map");
 
