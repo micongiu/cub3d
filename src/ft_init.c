@@ -49,16 +49,23 @@ void render_3d(t_data *data)
 	ft_memset(data->img_addr, 0, render_vars.screen_width * render_vars.screen_height * (data->bits_per_pixel / 8));
 
 	// Renderizza il cielo (metà superiore dello schermo)
+	// Renderizza il cielo
 	for (int i = 0; i < render_vars.screen_width; i++) {
 		for (int y = 0; y < render_vars.screen_height / 2; y++) {
-			my_mlx_pixel_put(data, i, y, 0xA020F0); // Viola per il cielo
+			int tex_x = (i * data->texture_sky.width) / render_vars.screen_width;
+			int tex_y = (y * data->texture_sky.height) / (render_vars.screen_height / 2);
+			int color = data->texture_sky.data[tex_y * data->texture_sky.width + tex_x];
+			my_mlx_pixel_put(data, i, y, color);
 		}
 	}
 
-	// Renderizza il pavimento (metà inferiore dello schermo)
+	// Renderizza il pavimento
 	for (int i = 0; i < render_vars.screen_width; i++) {
 		for (int y = render_vars.screen_height / 2; y < render_vars.screen_height; y++) {
-			my_mlx_pixel_put(data, i, y, 0x83f52c); // Verde per il pavimento
+			int tex_x = (i * data->texture_grass.width) / render_vars.screen_width;
+			int tex_y = ((y - render_vars.screen_height / 2) * data->texture_grass.height) / (render_vars.screen_height / 2);
+			int color = data->texture_grass.data[tex_y * data->texture_grass.width + tex_x];
+			my_mlx_pixel_put(data, i, y, color);
 		}
 	}
 
@@ -308,6 +315,12 @@ void ft_init_data(t_data *data, char *argv)
 	data->texture_west.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/b_w_w.xpm", &data->texture_west.width, &data->texture_west.height);
 	if (!data->texture_north.img || !data->texture_south.img || !data->texture_east.img || !data->texture_west.img)
 		ft_error("Error loading XPM images");
+	data->texture_sky.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/sky.xpm", &data->texture_sky.width, &data->texture_sky.height);
+	data->texture_grass.img = mlx_xpm_file_to_image(data->mlx, "./test.xpm/grass.xpm", &data->texture_grass.width, &data->texture_grass.height);
+	if (!data->texture_sky.img || !data->texture_grass.img)
+		ft_error("Error loading sky or grass XPM images");
+	convert_texture_data(data, &data->texture_sky);
+	convert_texture_data(data, &data->texture_grass);
 	convert_texture_data(data, &data->texture_north);
 	convert_texture_data(data, &data->texture_south);
 	convert_texture_data(data, &data->texture_east);

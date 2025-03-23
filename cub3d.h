@@ -96,6 +96,8 @@ typedef struct s_data
 	t_texture	texture_south;
 	t_texture	texture_east;
 	t_texture	texture_west;
+	t_texture texture_sky;
+	t_texture texture_grass;
 }	t_data;
 
 
