@@ -113,6 +113,9 @@ void	move_p(t_data *data, char direc);
 void	ft_init_data(t_data *data, char *argv);
 
 
+void	render_3d(t_data *data);
+void 	my_mlx_pixel_put(t_data *data, int x, int y, int color);
+
 // main.c
 
 void	free_matrix(void **matrix);
