@@ -1,9 +1,9 @@
 #include "../cub3d.h"
 
-void rotate_view(float *dx, float *dy, float angle)
+void	rotate_view(float *dx, float *dy, float angle)
 {
-	float new_dx;
-	float new_dy;
+	float	new_dx;
+	float	new_dy;
 
 	new_dx = (*dx) * cos(angle) - (*dy) * sin(angle);
 	new_dy = (*dx) * sin(angle) + (*dy) * cos(angle);
@@ -41,8 +41,8 @@ void	move_player_2(t_data *data, char direc, float new_x, float new_y)
 
 void	move_player(t_data *data, char direc)
 {
-	float new_x;
-	float new_y;
+	float	new_x;
+	float	new_y;
 
 	new_x = data->float_x;
 	new_y = data->float_y;

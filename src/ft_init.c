@@ -1,36 +1,29 @@
 #include "../cub3d.h"
 
 // Funzione per mettere un pixel nel buffer dell'immagine
-void my_mlx_pixel_put(t_data *data, int x, int y, int color)
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
-	char *dst = data->img_addr + (y * data->line_length
-		+ x * (data->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
+	char	*dst;
+
+	dst = data->img_addr + (y * data->line_length
+			+ x * (data->bits_per_pixel / 8));
+	*(unsigned int *)dst = color;
 }
 
-// Funzione per convertire i dati della texture in un array di interi
-void convert_texture_data(t_data *data, t_texture *texture)
+void	ft_init_mlx_2(t_data *data)
 {
-	(void)data;
-	texture->data = (int *)ft_calloc(sizeof(int), texture->width * texture->height);
-	if (!texture->data)
-		ft_error("no texture");
-	void *addr = mlx_get_data_addr(texture->img, &texture->bits_per_pixel,
-								&texture->line_length, &texture->endian);
-	for (int y = 0; y < texture->height; y++)
-	{
-		for (int x = 0; x < texture->width; x++)
-		{
-			int pixel = y * texture->line_length + x * 4;
-			char *ptr = addr + pixel;
-			texture->data[y * texture->width + x] = ((unsigned char)ptr[2] << 16) +
-												((unsigned char)ptr[1] << 8) +
-												((unsigned char)ptr[0]);
-		}
-	}
+	if (!data->texture_north.img || !data->texture_south.img
+		|| !data->texture_east.img || !data->texture_west.img)
+		ft_error("Error loading XPM images");
+	data->texture_sky.img = mlx_xpm_file_to_image(data->mlx,
+			"./test.xpm/sky.xpm", &data->texture_sky.width,
+			&data->texture_sky.height);
+	data->texture_grass.img = mlx_xpm_file_to_image(data->mlx,
+			"./test.xpm/grass.xpm", &data->texture_grass.width,
+			&data->texture_grass.height);
 }
 
-int parser_map(t_data *data)
+void	ft_init_mlx(t_data *data)
 {
 	int i = 0;
 	int j = 0;
@@ -113,12 +106,12 @@ void find_player_orientation(t_data *data)
 	ft_error("Player starting position not found");
 }
 
-void ft_init_data(t_data *data, char *argv)
+void	ft_init_data(t_data *data, char *argv)
 {
 	data->map = open_file(argv);
 
 	calculate_map_dimensions(data);
-	if(parser_map(data) == 1)
+	if (parser_map(data) == 1)
 		ft_error("Error in the parser\n");
 	find_player_orientation(data);
 	data->mlx = mlx_init();

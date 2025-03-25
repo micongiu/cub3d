@@ -1,10 +1,12 @@
 #include "../cub3d.h"
 
-
-void find_player(t_data *data)
+void	find_player(t_data *data)
 {
-	int i = 0;
-	int j = 0;
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
 	while (data->map[i] != NULL)
 	{
 		j = 0;
@@ -17,36 +19,39 @@ void find_player(t_data *data)
 				data->float_x = i + 0.5;
 				data->float_y = j + 0.5;
 				data->y_player = i;
-				return;
+				return ;
 			}
 			j++;
 		}
 		i++;
 	}
-	printf("no player\n");
 	free_matrix((void **)data->map);
 	free(data);
-	exit(0);
+	ft_error("No player");
 }
-void calculate_map_dimensions(t_data *data)
+
+void	calculate_map_dimensions(t_data *data)
 {
-	int row_length;
+	int	row_length;
+	int	y;
+
 	data->map_width = 0;
 	data->map_height = 0;
-
 	row_length = 0;
-	for (int y = 0; data->map[y] != NULL; y++)
+	y = 0;
+	while (data->map[y] != NULL)
 	{
 		row_length = ft_strlen_lib(data->map[y]);
 		if (row_length > data->map_width)
 			data->map_width = row_length;
 		data->map_height++;
+		y++;
 	}
 	data->map_width--;
 	find_player(data);
 }
 
-int ft_close(t_data *data)
+int	ft_close(t_data *data)
 {
 	printf("ESC pressed. Exiting...\n");
 	mlx_destroy_image(data->mlx, data->img_buffer);
@@ -70,7 +75,7 @@ int ft_close(t_data *data)
 	exit(0);
 }
 
-int handle_keypress(int keycode, t_data *data)
+int	handle_keypress(int keycode, t_data *data)
 {
 	if (keycode == 65307)
 		ft_close(data);
@@ -89,12 +94,21 @@ int handle_keypress(int keycode, t_data *data)
 	return (0);
 }
 
-void draw_square(t_data *data, int x, int y, int color)
+void	draw_square(t_data *data, int x, int y, int color)
 {
-	for (int i = 0; i < TILE_SIZE; i++)
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < TILE_SIZE)
 	{
-		for (int j = 0; j < TILE_SIZE; j++)
+		y = 0;
+		while (y < TILE_SIZE)
+		{
 			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE
 				+ j, y * TILE_SIZE + i, color);
+			y++;
+		}
+		i++;
 	}
 }

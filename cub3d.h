@@ -122,7 +122,7 @@ void	draw_square(t_data *data, int x, int y, int color);
 void	move_p(t_data *data, char direc);
 void	ft_init_data(t_data *data, char *argv);
 
-void	move_player(t_data *data, char direc);
+
 void	render_3d(t_data *data);
 void 	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 
