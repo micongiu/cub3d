@@ -203,14 +203,6 @@ void	render_3d(t_data *data)
 		for (int y = render_vars.draw_start; y < render_vars.draw_end; y++) {
 			render_vars.tex_y = (int)((y - render_vars.draw_start) * render_vars.current_texture->height / render_vars.line_height);
 			render_vars.color = render_vars.current_texture->data[render_vars.tex_y * render_vars.current_texture->width + render_vars.tex_x];
-			//___Invalid read of size 4 at 0x111FC4: render_3d (ft_render.c:205)
-			render_vars.shade = 1.0 / (1.0 + render_vars.distance * 0.1);
-			if (render_vars.shade > 1.0)
-				render_vars.shade = 1.0;
-			render_vars.r = (int)(((render_vars.color >> 16) & 0xFF) * render_vars.shade);
-			render_vars.g = (int)(((render_vars.color >> 8) & 0xFF) * render_vars.shade);
-			render_vars.b = (int)((render_vars.color & 0xFF) * render_vars.shade);
-			render_vars.color = (render_vars.r << 16) | (render_vars.g << 8) | render_vars.b;
 			my_mlx_pixel_put(data, x, y, render_vars.color);
 		}
 		render_vars.ray_angle += render_vars.angle_step;
