@@ -10,7 +10,8 @@ void find_player(t_data *data)
 		j = 0;
 		while (data->map[i][j] != '\0')
 		{
-			if (data->map[i][j] == 'P')
+			if (data->map[i][j] == 'N' || data->map[i][j] == 'S' ||
+				data->map[i][j] == 'E' || data->map[i][j] == 'W')
 			{
 				data->x_player = j;
 				data->float_x = i + 0.5;

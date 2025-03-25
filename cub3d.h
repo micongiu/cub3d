@@ -14,6 +14,10 @@
 #define HEIGHT 600
 #define TILE_SIZE 64
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 // Structures
 
 typedef struct s_texture {

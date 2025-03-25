@@ -56,7 +56,9 @@ int parser_map(t_data *data)
 		j = 0;
 		while (j < data->map_width - 1)
 		{
-			if (data->map[i][j] != '1' && data->map[i][j] != '0' && data->map[i][j] != 'P')
+			if (data->map[i][j] != '1' && data->map[i][j] != '0' &&
+				data->map[i][j] != 'N' && data->map[i][j] != 'S' &&
+				data->map[i][j] != 'E' && data->map[i][j] != 'W')
 			return 1;
 			j++;
 		}
@@ -64,15 +66,61 @@ int parser_map(t_data *data)
 	}
 	return 0;
 }
+void find_player_orientation(t_data *data)
+{
+	int i = 0;
+	while (i < data->map_height)
+	{
+		int j = 0;
+		while (j < data->map_width)
+		{
+			if (data->map[i][j] == 'N' || data->map[i][j] == 'S' ||
+				data->map[i][j] == 'E' || data->map[i][j] == 'W')
+			{
+				data->x_player = j;
+				data->y_player = i;
+				if (data->map[i][j] == 'N')
+				{
+					data->player_angle = M_PI * 2; // 90 gradi
+					data->dx = 0;
+					data->dy = -1;
+				}
+				else if (data->map[i][j] == 'S')
+				{
+					data->player_angle = 3 * (M_PI * 2); // 270 gradi
+					data->dx = 0;
+					data->dy = 1;
+				}
+				else if (data->map[i][j] == 'E')
+				{
+					data->player_angle = 0; // 0 gradi
+					data->dx = 1;
+					data->dy = 0;
+				}
+				else if (data->map[i][j] == 'W')
+				{
+					data->player_angle = M_PI; // 180 gradi
+					data->dx = -1;
+					data->dy = 0;
+				}
+				data->map[i][j] = '0'; // Sostituisci la posizione con '0'
+				return;
+			}
+			j++;
+		}
+		i++;
+	}
+	ft_error("Player starting position not found");
+}
 
 void ft_init_data(t_data *data, char *argv)
 {
 	data->map = open_file(argv);
-	data->dx = 0;
-	data->dy = -1;
+
 	calculate_map_dimensions(data);
 	if(parser_map(data) == 1)
 		ft_error("Error in the parser\n");
+	find_player_orientation(data);
 	data->mlx = mlx_init();
 	data->win = mlx_new_window(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE, "Cub3D Map");
 	data->img_buffer = mlx_new_image(data->mlx, data->map_width * TILE_SIZE, data->map_height * TILE_SIZE);
