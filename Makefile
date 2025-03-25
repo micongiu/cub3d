@@ -15,7 +15,7 @@ MLX_LIBS += -L./minilibx-linux -lmlx -lXext -lX11 -lm -lbsd
 MAKEFLAGS += -s
 
 GNL = ./gnl/get_next_line_utils.c ./gnl/get_next_line.c
-MAIN = ./src/main.c ./src/read_map.c ./src/ft_init.c ./src/utils.c ./src/ft_render.c ./src/ft_move.c ./src/ft_utils_2.c ./src/ft_texture.c ./src/ft_player_int.c
+MAIN = ./src/main.c ./src/read_map.c ./src/ft_init.c ./src/utils.c ./src/ft_render.c ./src/ft_move.c ./src/ft_utils_2.c ./src/ft_texture.c ./src/ft_player_int.c ./src/ft_render_sky_floor.c
 
 SRC = $(GNL) $(MAIN)
 

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_utils_2.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: micongiu <micongiu@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/25 14:16:03 by micongiu          #+#    #+#             */
+/*   Updated: 2025/03/25 14:21:22 by micongiu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3d.h"
 
 void	calculate_initial_lateral_distance(t_render_data *r_vars)
@@ -64,7 +76,7 @@ void	set_up_3d_render(t_render_data *r_vars, t_data *data)
 	r_vars->map_y = (int)r_vars->ray_y;
 }
 
-void	calculate_the_height_line_to_be_drawn_on_screen(t_render_data *r_vars)
+void	calculate_the_height_line_to_be_drawn_screen(t_render_data *r_vars)
 {
 	r_vars->line_height = 0;
 	if (r_vars->hit_wall)

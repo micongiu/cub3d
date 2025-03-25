@@ -1,49 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_render.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: micongiu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/25 14:15:40 by micongiu          #+#    #+#             */
+/*   Updated: 2025/03/25 14:15:42 by micongiu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../cub3d.h"
-
-void	render_floor_and_sky(t_render_data *render_vars, t_data *data)
-{
-	t_var_count var_count;
-	int	tex_x;
-	int	tex_y;
-	int	color;
-
-	var_count.i = 0;
-	while (var_count.i < render_vars->screen_width)
-	{
-		var_count.j = 0;
-		while (var_count.j < render_vars->screen_height / 2)
-		{
-			tex_x = (var_count.i * data->texture_sky.width) / render_vars->screen_width;
-			tex_y = (var_count.j * data->texture_sky.height) / (render_vars->screen_height / 2);
-			if (tex_x >= 0 && tex_x < data->texture_sky.width &&
-				tex_y >= 0 && tex_y < data->texture_sky.height)
-			{
-				color = data->texture_sky.data[tex_y * data->texture_sky.width + tex_x];
-				my_mlx_pixel_put(data, var_count.i, var_count.j, color);
-			}
-			var_count.j++;
-		}
-		var_count.i++;
-	}
-	var_count.i = 0;
-	while (var_count.i < render_vars->screen_width)
-	{
-		var_count.j = render_vars->screen_height / 2;
-		while (var_count.j < render_vars->screen_height)
-		{
-			tex_x = (var_count.i * data->texture_grass.width) / render_vars->screen_width;
-			tex_y = ((var_count.j - render_vars->screen_height / 2) * data->texture_grass.height) / (render_vars->screen_height / 2);
-			if (tex_x >= 0 && tex_x < data->texture_grass.width &&
-				tex_y >= 0 && tex_y < data->texture_grass.height)
-			{
-				color = data->texture_grass.data[tex_y * data->texture_grass.width + tex_x];
-				my_mlx_pixel_put(data, var_count.i, var_count.j, color);
-			}
-			var_count.j++;
-		}
-		var_count.i++;
-	}
-}
 
 void	dda(t_render_data *r_vars, t_data *data)
 {
@@ -81,8 +48,8 @@ static void	render_wall_slice(t_render_data *r_vars, t_data *data, int x)
 	y = r_vars->draw_start;
 	while (y < r_vars->draw_end)
 	{
-		r_vars->tex_y = (int)((y - r_vars->draw_start) *
-			r_vars->current_texture->height / r_vars->line_height);
+		r_vars->tex_y = (int)((y - r_vars->draw_start)
+				* r_vars->current_texture->height / r_vars->line_height);
 		r_vars->color = r_vars->current_texture->data[
 			r_vars->tex_y * r_vars->current_texture->width + r_vars->tex_x];
 		my_mlx_pixel_put(data, x, y, r_vars->color);
@@ -124,8 +91,8 @@ void	render_3d(t_data *data)
 
 	r_vars.screen_width = data->map_width * TILE_SIZE;
 	r_vars.screen_height = data->map_height * TILE_SIZE;
-	ft_memset(data->img_addr, 0, r_vars.screen_width *
-		r_vars.screen_height * (data->bits_per_pixel / 8));
+	ft_memset(data->img_addr, 0, r_vars.screen_width
+		* r_vars.screen_height * (data->bits_per_pixel / 8));
 	render_floor_and_sky(&r_vars, data);
 	r_vars.fov = 1.0472;
 	r_vars.ray_n = r_vars.screen_width;
