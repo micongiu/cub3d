@@ -6,7 +6,6 @@ void	find_player(t_data *data)
 	int	j;
 
 	i = 0;
-	j = 0;
 	while (data->map[i] != NULL)
 	{
 		j = 0;
@@ -27,7 +26,7 @@ void	find_player(t_data *data)
 	}
 	free_matrix((void **)data->map);
 	free(data);
-	ft_error("No player");
+	ft_error("no player\n");
 }
 
 void	calculate_map_dimensions(t_data *data)
@@ -37,7 +36,6 @@ void	calculate_map_dimensions(t_data *data)
 
 	data->map_width = 0;
 	data->map_height = 0;
-	row_length = 0;
 	y = 0;
 	while (data->map[y] != NULL)
 	{
@@ -79,7 +77,7 @@ int	handle_keypress(int keycode, t_data *data)
 {
 	if (keycode == 65307)
 		ft_close(data);
-	if (keycode == 119)
+	else if (keycode == 119)
 		move_player(data, 'w');
 	else if (keycode == 115)
 		move_player(data, 's');
@@ -105,8 +103,8 @@ void	draw_square(t_data *data, int x, int y, int color)
 		j = 0;
 		while (j < TILE_SIZE)
 		{
-			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE
-				+ j, y * TILE_SIZE + i, color);
+			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE + j,
+				y * TILE_SIZE + i, color);
 			j++;
 		}
 		i++;

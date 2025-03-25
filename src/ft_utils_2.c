@@ -75,12 +75,12 @@ void	calculate_the_height_line_to_be_drawn_on_screen(t_render_data *r_vars)
 				/ r_vars->corrected_distance);
 	}
 }
+
 void	calculate_the_exact_coordinate_impact_point(t_render_data *r_vars)
 {
 	if (r_vars->hit_side == 0)
-			r_vars->wall_x = r_vars->ray_y + r_vars->distance * r_vars->ray_dy;
+		r_vars->wall_x = r_vars->ray_y + r_vars->distance * r_vars->ray_dy;
 	else
 		r_vars->wall_x = r_vars->ray_x + r_vars->distance * r_vars->ray_dx;
 	r_vars->wall_x -= floor(r_vars->wall_x);
 }
-
