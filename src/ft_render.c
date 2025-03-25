@@ -200,9 +200,10 @@ void	render_3d(t_data *data)
 		render_vars.draw_end = (render_vars.screen_height + render_vars.line_height) / 2;
 		if (render_vars.draw_end >= render_vars.screen_height)
 			render_vars.draw_end = render_vars.screen_height - 1;
-		for (int y = render_vars.draw_start; y <= render_vars.draw_end; y++) {
+		for (int y = render_vars.draw_start; y < render_vars.draw_end; y++) {
 			render_vars.tex_y = (int)((y - render_vars.draw_start) * render_vars.current_texture->height / render_vars.line_height);
 			render_vars.color = render_vars.current_texture->data[render_vars.tex_y * render_vars.current_texture->width + render_vars.tex_x];
+			//___Invalid read of size 4 at 0x111FC4: render_3d (ft_render.c:205)
 			render_vars.shade = 1.0 / (1.0 + render_vars.distance * 0.1);
 			if (render_vars.shade > 1.0)
 				render_vars.shade = 1.0;
