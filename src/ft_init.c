@@ -46,57 +46,10 @@ void	ft_init_mlx(t_data *data)
 			&data->texture_west.height);
 	ft_init_mlx_2(data);
 }
-void find_player_orientation(t_data *data)
-{
-	int i = 0;
-	while (i < data->map_height)
-	{
-		int j = 0;
-		while (j < data->map_width)
-		{
-			if (data->map[i][j] == 'N' || data->map[i][j] == 'S' ||
-				data->map[i][j] == 'E' || data->map[i][j] == 'W')
-			{
-				data->x_player = j;
-				data->y_player = i;
-				if (data->map[i][j] == 'N')
-				{
-					data->player_angle = M_PI * 2;
-					data->dx = 0;
-					data->dy = -1;
-				}
-				else if (data->map[i][j] == 'S')
-				{
-					data->player_angle = 3 * (M_PI * 2);
-					data->dx = 0;
-					data->dy = 1;
-				}
-				else if (data->map[i][j] == 'E')
-				{
-					data->player_angle = 0;
-					data->dx = 1;
-					data->dy = 0;
-				}
-				else if (data->map[i][j] == 'W')
-				{
-					data->player_angle = M_PI;
-					data->dx = -1;
-					data->dy = 0;
-				}
-				data->map[i][j] = '0';
-				return;
-			}
-			j++;
-		}
-		i++;
-	}
-	ft_error("Player starting position not found");
-}
 
 void	ft_init_data(t_data *data, char *argv)
 {
 	data->map = open_file(argv);
-
 	calculate_map_dimensions(data);
 	if (parser_map(data) == 1)
 		ft_error("Error in the parser\n");

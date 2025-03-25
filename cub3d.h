@@ -69,6 +69,13 @@ typedef struct s_render_data {
 	int			b;
 }	t_render_data;
 
+typedef struct s_render
+{
+	int			tex_x;
+	int			tex_y;
+	int			color;
+}	t_render;
+
 typedef struct s_var_count
 {
 	int	i;
@@ -139,6 +146,7 @@ int		main();
 
 int		parser_map(t_data *data);
 void	convert_texture_data(t_data *data, t_texture *texture);
+void	find_player_orientation(t_data *data);
 
 
 #endif
