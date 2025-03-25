@@ -102,12 +102,12 @@ void	draw_square(t_data *data, int x, int y, int color)
 	i = 0;
 	while (i < TILE_SIZE)
 	{
-		y = 0;
-		while (y < TILE_SIZE)
+		j = 0;
+		while (j < TILE_SIZE)
 		{
 			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE
 				+ j, y * TILE_SIZE + i, color);
-			y++;
+			j++;
 		}
 		i++;
 	}

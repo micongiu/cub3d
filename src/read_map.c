@@ -8,20 +8,20 @@ int	parser_map_loop(t_data *data)
 	var.j = 0;
 	while (var.i < data->map_height - 1)
 	{
-		if (data->map[var.i][0] != '1'
-			|| data->map[var.i][data->map_width - 1] != '1')
+		if (data->map[var.i][0] != '1' || data->map[var.i][data->map_width - 1] != '1')
 			return (1);
 		var.j = 0;
 		while (var.j < data->map_width - 1)
 		{
-			if (data->map[var.i][var.j] != '1' && data->map[var.i][var.j]
-				!= '0' && data->map[var.i][var.j] != 'P')
+			if (data->map[var.i][var.j] != '1' && data->map[var.i][var.j] != '0' &&
+				data->map[var.i][var.j] != 'N' && data->map[var.i][var.j] != 'S' &&
+				data->map[var.i][var.j] != 'E' && data->map[var.i][var.j] != 'W')
 				return (1);
 			var.j++;
 		}
 		var.i++;
 	}
-	return (0);
+	return 0;
 }
 
 int	parser_map(t_data *data)
