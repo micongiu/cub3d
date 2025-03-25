@@ -100,6 +100,12 @@ typedef struct s_data
 	t_texture texture_grass;
 }	t_data;
 
+//ft_utils_2.c
+t_texture	*calculate_the_texture_to_use(t_render_data *r_vars, t_data *data);
+void	set_up_3d_render(t_render_data *r_vars, t_data *data);
+void	calculate_the_height_line_to_be_drawn_on_screen(t_render_data *r_vars);
+void	calculate_the_exact_coordinate_impact_point(t_render_data *r_vars);void	calculate_initial_lateral_distance(t_render_data *r_vars);
+void	calculate_initial_lateral_distance(t_render_data *r_vars);
 
 // utils
 void	find_player(t_data *data);
@@ -122,5 +128,7 @@ void	free_matrix(void **matrix);
 void	ft_error(char *str);
 char	**open_file(char *file_read);
 int		main();
+
+
 
 #endif
