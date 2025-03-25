@@ -3,17 +3,9 @@
 // Funzione per mettere un pixel nel buffer dell'immagine
 void my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
-	char *dst = data->img_addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+	char *dst = data->img_addr + (y * data->line_length
+		+ x * (data->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
-}
-
-void rotate_view(float *dx, float *dy, float angle)
-{
-	float new_dx = (*dx) * cos(angle) - (*dy) * sin(angle);
-	float new_dy = (*dx) * sin(angle) + (*dy) * cos(angle);
-
-	*dx = new_dx;
-	*dy = new_dy;
 }
 
 // Funzione per convertire i dati della texture in un array di interi
@@ -35,49 +27,6 @@ void convert_texture_data(t_data *data, t_texture *texture)
 												((unsigned char)ptr[1] << 8) +
 												((unsigned char)ptr[0]);
 		}
-	}
-}
-
-void move_p(t_data *data, char direc)
-{
-	float new_x = data->float_x;
-	float new_y = data->float_y;
-
-	if (direc == 'w') { // Avanti
-		new_x += data->dx * 0.1;
-		new_y += data->dy * 0.1;
-	}
-	if (direc == 's') { // Indietro
-		new_x -= data->dx * 0.1;
-		new_y -= data->dy * 0.1;
-	}
-	if (direc == 'a') { // Sinistra (laterale)
-		new_x += data->dy * 0.1;
-		new_y -= data->dx * 0.1;
-	}
-	if (direc == 'd') { // Destra (laterale)
-		new_x -= data->dy * 0.1;
-		new_y += data->dx * 0.1;
-	}
-	if (direc == 'l') // Sinistra
-		rotate_view(&data->dx, &data->dy, -0.1);
-	if (direc == 'r') // Destra
-		rotate_view(&data->dx, &data->dy, 0.1);
-	if (new_x > 0 && new_y > 0 && new_y < data->map_height && new_x < (data->map_width - 1)) {
-		if (data->map[(int)new_y][(int)new_x] != '1') {
-			data->float_x = new_x;
-			data->float_y = new_y;
-			data->map[data->y_player][data->x_player] = '0';
-			data->x_player = (int)data->float_x;
-			data->y_player = (int)data->float_y;
-			data->map[data->y_player][data->x_player] = 'P';
-			mlx_clear_window(data->mlx, data->win);
-			render_3d(data);
-		} else {
-			printf("Wall!!!\n");
-		}
-	} else {
-		printf("Wall!!!\n");
 	}
 }
 

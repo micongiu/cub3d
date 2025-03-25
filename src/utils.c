@@ -42,10 +42,7 @@ void calculate_map_dimensions(t_data *data)
 		data->map_height++;
 	}
 	data->map_width--;
-	// data->map_height--;
 	find_player(data);
-	printf("x_p = %i\n", data->x_player);
-	printf("y_p = %i\n", data->y_player);
 }
 
 int ft_close(t_data *data)
@@ -71,22 +68,23 @@ int ft_close(t_data *data)
 	free(data);
 	exit(0);
 }
+
 int handle_keypress(int keycode, t_data *data)
 {
 	if (keycode == 65307)
 		ft_close(data);
 	if (keycode == 119)
-		move_p(data, 'w');
+		move_player(data, 'w');
 	else if (keycode == 115)
-		move_p(data, 's');
+		move_player(data, 's');
 	else if (keycode == 97)
-		move_p(data, 'a');
+		move_player(data, 'a');
 	else if (keycode == 100)
-		move_p(data, 'd');
+		move_player(data, 'd');
 	else if (keycode == 65361)
-		move_p(data, 'l');
+		move_player(data, 'l');
 	else if (keycode == 65363)
-		move_p(data, 'r');
+		move_player(data, 'r');
 	return (0);
 }
 
@@ -95,6 +93,7 @@ void draw_square(t_data *data, int x, int y, int color)
 	for (int i = 0; i < TILE_SIZE; i++)
 	{
 		for (int j = 0; j < TILE_SIZE; j++)
-			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE + j, y * TILE_SIZE + i, color);
+			mlx_pixel_put(data->mlx, data->win, x * TILE_SIZE
+				+ j, y * TILE_SIZE + i, color);
 	}
 }
