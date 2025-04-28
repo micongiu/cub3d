@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_render.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: micongiu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: anmedyns <anmedyns@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 14:15:40 by micongiu          #+#    #+#             */
-/*   Updated: 2025/03/25 14:15:42 by micongiu         ###   ########.fr       */
+/*   Updated: 2025/04/28 20:44:34 by anmedyns         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ static void	process_ray(t_render_data *r_vars, t_data *data, int x)
 	if ((r_vars->hit_side == 0 && r_vars->ray_dx > 0)
 		|| (r_vars->hit_side == 1 && r_vars->ray_dy < 0))
 		r_vars->tex_x = r_vars->current_texture->width - r_vars->tex_x - 1;
-	calculate_the_height_line_to_be_drawn_on_screen(r_vars);
+	calculate_the_height_line_to_be_drawn_screen(r_vars);
 	calculate_wall_dimensions(r_vars);
 	render_wall_slice(r_vars, data, x);
 }
